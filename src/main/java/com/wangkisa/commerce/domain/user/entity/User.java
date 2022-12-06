@@ -1,6 +1,6 @@
 package com.wangkisa.commerce.domain.user.entity;
 
-import com.wangkisa.commerce.domain.common.BaseEntity;
+import com.wangkisa.commerce.domain.common.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

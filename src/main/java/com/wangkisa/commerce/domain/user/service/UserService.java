@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.domain.user.service;
 
+import com.wangkisa.commerce.configuration.SecurityConfig;
 import com.wangkisa.commerce.domain.user.code.UserErrorCode;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import com.wangkisa.commerce.domain.user.entity.Password;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+//    private final SecurityConfig securityConfig;
+
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -41,15 +44,14 @@ public class UserService {
             throw new CustomException(UserErrorCode.ERROR_SIGNUP_DUPLICATE_NICKNAME);
         }
 
+        User user = User.builder()
+                .email(reqSignUp.getEmail())
+                .nickname(reqSignUp.getNickName())
+                .phone(reqSignUp.getPhone())
+                .password(Password.of(reqSignUp.getPassword(), passwordEncoder))
+                .build();
 
-        User savedUser = userRepository.save(
-            User.builder()
-                    .email(reqSignUp.getEmail())
-                    .nickname(reqSignUp.getNickName())
-                    .phone(reqSignUp.getPhone())
-                    .password(Password.of(reqSignUp.getPassword(), passwordEncoder) )
-                    .build()
-        );
+        User savedUser = userRepository.save(user);
 
         return UserDto.ResUserInfo.fromUser(savedUser);
     }

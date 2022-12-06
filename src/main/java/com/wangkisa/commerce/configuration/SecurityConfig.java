@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.configuration;
 
+import com.wangkisa.commerce.security.SecurityAuthenticationFilter;
 import com.wangkisa.commerce.security.SecurityUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +19,9 @@ import static org.springframework.http.HttpMethod.POST;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    private final SecurityAuthenticationFilter securityAuthenticationFilter;
-//    private final SecurityAccessDeniedHandler securityAccessDeniedHandler;
-//    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
+    private final SecurityAuthenticationFilter securityAuthenticationFilter;
+    private final SecurityAccessDeniedHandler securityAccessDeniedHandler;
+    private final SecurityAuthenticationEntryPoint securityAuthenticationEntryPoint;
     private final SecurityUserDetailService securityUserDetailService;
 //
     @Override
@@ -30,32 +31,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(securityUserDetailService)
                 .passwordEncoder(passwordEncoder());
     }
-    
+
 //
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.cors();
-//        http.csrf().disable();
-//        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        http.headers().frameOptions().disable();
-//        http.formLogin().disable();
-//        http.logout().disable();
-//
-//        http.exceptionHandling()
-//                .accessDeniedHandler(securityAccessDeniedHandler)
-//                .authenticationEntryPoint(securityAuthenticationEntryPoint);
-//
-//        http.authorizeRequests()
-//                .antMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**", "/favicon.ico").permitAll()
-//                .antMatchers(POST, "/api/user/login/**", "/api/user").permitAll()
-//
-//                .anyRequest().authenticated();
-//
-//        http.addFilterBefore(securityAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//    }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.cors();
+        http.csrf().disable();
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.headers().frameOptions().disable();
+        http.formLogin().disable();
+        http.logout().disable();
+
+        http.exceptionHandling()
+                .accessDeniedHandler(securityAccessDeniedHandler)
+                .authenticationEntryPoint(securityAuthenticationEntryPoint);
+
+        http.authorizeRequests()
+                .antMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**", "/favicon.ico").permitAll()
+                .antMatchers(POST, "/api/user/login/**", "/api/user").permitAll()
+
+                .anyRequest().authenticated();
+
+        http.addFilterBefore(securityAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

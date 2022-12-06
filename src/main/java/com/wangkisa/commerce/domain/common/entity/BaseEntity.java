@@ -1,4 +1,4 @@
-package com.wangkisa.commerce.domain.common;
+package com.wangkisa.commerce.domain.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.data.annotation.CreatedDate;
