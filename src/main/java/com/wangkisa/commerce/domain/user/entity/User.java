@@ -33,6 +33,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String phone;
 
+    private String refreshToken;
+
     @Builder
     public User(String email, Password password, String nickname, String phone) {
         this.email = email;

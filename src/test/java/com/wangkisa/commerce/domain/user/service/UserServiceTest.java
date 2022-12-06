@@ -29,20 +29,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-//@ExtendWith({MockitoExtension.class})
+@ExtendWith({MockitoExtension.class})
 //@RunWith(SpringRunner.class)
 //@WebMvcTest({UserController.class})
 //@RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 class UserServiceTest {
 
-    @MockBean
+    @Mock
     UserRepository userRepository;
 
-    @MockBean
+    @Mock
     private SecurityConfig securityConfig;
 
-    @Autowired
+    @InjectMocks
     UserService userService;
 
     @BeforeEach
@@ -108,43 +108,5 @@ class UserServiceTest {
 //        Assertions.assertThat(resUserInfo.getEmail()).isEqualTo(defaultReqSignUpDto.getEmail());
 //        Assertions.assertThat(resUserInfo.getNickName()).isEqualTo(defaultReqSignUpDto.getNickName());
 //        Assertions.assertThat(resUserInfo.getPhone()).isEqualTo(defaultReqSignUpDto.getPhone());
-    }
-
-
-    @Test
-    @DisplayName("회원가입 테스트")
-    void signUpTest() {
-        /**
-         * 1. 인증 번호값이 오류 인 경우 실패 테스트
-         */
-        // given
-
-        // when
-
-        // then
-        /**
-         * 2. 이메일 혹은 닉네임이 중복인 경우 실패 테스트
-         */
-        // given
-
-        // when
-
-        // then
-
-        /**
-         * 3. 휴대폰 인증 정상과 가입 성공 테스트
-         */
-        // given
-
-        // when
-
-        // then
-
-//        userService.signUp()
-    }
-
-    @Test
-    public void $NAME() {
-
     }
 }

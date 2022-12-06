@@ -1,6 +1,7 @@
 package com.wangkisa.commerce.security;
 
 import com.wangkisa.commerce.domain.user.entity.User;
+import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

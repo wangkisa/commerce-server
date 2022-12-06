@@ -19,7 +19,7 @@ public class ApiResponse<T> {
     protected ApiResponse() {
     }
 
-    private ApiResponse(int code, String message, List<String> errorDetails, T data) {
+    public ApiResponse(int code, String message, List<String> errorDetails, T data) {
         this.code = code;
         this.message = message;
         this.errorDetails = errorDetails;
