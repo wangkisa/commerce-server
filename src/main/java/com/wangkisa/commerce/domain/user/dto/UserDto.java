@@ -34,7 +34,7 @@ public class UserDto {
         private String password;
 
         @NotNull
-        @Pattern(regexp = "^[0-9]{3}[-]+[0-9]{4}[-]+[0-9]{4}/", message = "전화번호 형식은 000-0000-0000 입니다.")
+        @Pattern(regexp = "^[0-9]{3}[-]+[0-9]{4}[-]+[0-9]{4}", message = "전화번호 형식은 000-0000-0000 입니다.")
         @Schema(description = "휴대폰 번호(000-0000-0000)")
         private String phone;
     }

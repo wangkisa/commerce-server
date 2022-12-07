@@ -1,8 +1,7 @@
 package com.wangkisa.commerce.domain.user.service;
 
-import com.wangkisa.commerce.configuration.SecurityConfig;
+import com.wangkisa.commerce.security.SecurityConfig;
 import com.wangkisa.commerce.domain.user.code.UserErrorCode;
-import com.wangkisa.commerce.domain.user.controller.UserController;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import com.wangkisa.commerce.domain.user.entity.User;
 import com.wangkisa.commerce.domain.user.repository.UserRepository;
@@ -12,17 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -81,7 +72,7 @@ class UserServiceTest {
     public void signUp_NickNameDup_FailTest() {
         // given
         UserDto.ReqSignUp defaultReqSignUpDto = reqSignUpUserDto();
-        when(userRepository.existsByNickName(defaultReqSignUpDto.getNickName())).thenReturn(true);
+        when(userRepository.existsByNickname(defaultReqSignUpDto.getNickName())).thenReturn(true);
 
         // when
         CustomException customException = assertThrows(CustomException.class, () -> userService.signUp(defaultReqSignUpDto));

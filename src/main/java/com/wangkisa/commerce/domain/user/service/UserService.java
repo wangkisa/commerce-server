@@ -1,6 +1,5 @@
 package com.wangkisa.commerce.domain.user.service;
 
-import com.wangkisa.commerce.configuration.SecurityConfig;
 import com.wangkisa.commerce.domain.user.code.UserErrorCode;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import com.wangkisa.commerce.domain.user.entity.Password;
@@ -28,7 +27,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     private boolean checkDuplicateNickName(String nickName) {
-        return userRepository.existsByNickName(nickName);
+        return userRepository.existsByNickname(nickName);
     }
 
     /**

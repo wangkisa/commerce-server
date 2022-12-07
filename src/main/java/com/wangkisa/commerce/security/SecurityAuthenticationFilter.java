@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.security;
 
+import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
 import com.wangkisa.commerce.domain.user.entity.User;
 import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -50,7 +51,27 @@ public class SecurityAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+
+//        if (StringUtils.isNotBlank(refreshToken)) {
+//            try {
+//                try {
+//                    if(jwtTokenProvider.validateToken(refreshToken)) {
+//                        Authentication authentication = jwtTokenProvider.getAuthentication(refreshToken);
+//                        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//                        response.setHeader("new-access-token", jwtTokenProvider.createToken(jwtTokenProvider.getClaims(refreshToken, "email")).getAccessToken());
+//                    }
+//                } catch (ExpiredJwtException e) {
+//                    SecurityContextHolder.clearContext();
+//                    log.error("ACCESS TOKEN EXPIRED {} | {}", refreshToken, e.getMessage());
+//                }
+//            } catch (Exception e) {
+//                SecurityContextHolder.clearContext();
+//                log.error("JWT FILTER INTERNAL ERROR : {} | {}", accessToken, e.getMessage());
+//                return;
+//            }
+//        }
+
         filterChain.doFilter(request, response);
     }
 }
-

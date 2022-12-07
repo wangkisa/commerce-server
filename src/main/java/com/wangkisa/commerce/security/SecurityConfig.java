@@ -1,9 +1,5 @@
-package com.wangkisa.commerce.configuration;
+package com.wangkisa.commerce.security;
 
-import com.wangkisa.commerce.security.SecurityAccessDeniedHandler;
-import com.wangkisa.commerce.security.SecurityAuthenticationEntryPoint;
-import com.wangkisa.commerce.security.SecurityAuthenticationFilter;
-import com.wangkisa.commerce.security.SecurityUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +24,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(securityUserDetailService)
-//                .passwordEncoder(passwordEncoder());
         auth.userDetailsService(securityUserDetailService)
                 .passwordEncoder(passwordEncoder());
     }
@@ -50,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/swagger-ui.html/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**", "/favicon.ico").permitAll()
-                .antMatchers(POST, "/api/user/login/**", "/api/user").permitAll()
+                .antMatchers(POST, "/api/user/login/**", "/api/user/signUp", "/api/user").permitAll()
 
                 .anyRequest().authenticated();
 

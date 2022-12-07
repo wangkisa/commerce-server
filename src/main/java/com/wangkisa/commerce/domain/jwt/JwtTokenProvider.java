@@ -1,5 +1,7 @@
-package com.wangkisa.commerce.security;
+package com.wangkisa.commerce.domain.jwt;
 
+import com.wangkisa.commerce.security.JwtModel;
+import com.wangkisa.commerce.security.SecurityUserDetailService;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
