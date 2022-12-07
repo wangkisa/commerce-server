@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final SecurityConfig securityConfig;
 
     private final PasswordEncoder passwordEncoder;
 

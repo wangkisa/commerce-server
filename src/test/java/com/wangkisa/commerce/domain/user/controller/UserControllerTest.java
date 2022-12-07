@@ -1,38 +1,22 @@
 package com.wangkisa.commerce.domain.user.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wangkisa.commerce.domain.common.code.StatusCode;
-import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
-import com.wangkisa.commerce.domain.user.repository.UserRepository;
-import com.wangkisa.commerce.domain.user.service.UserService;
-import com.wangkisa.commerce.security.SecurityAccessDeniedHandler;
-import com.wangkisa.commerce.security.SecurityAuthenticationEntryPoint;
-import com.wangkisa.commerce.security.SecurityAuthenticationFilter;
-import com.wangkisa.commerce.security.SecurityUserDetailService;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-//@WebMvcTest(UserController.class)
-//@SpringBootTest
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
@@ -43,7 +27,6 @@ class UserControllerTest {
     @Autowired
     ObjectMapper mapper;
 
-
     private static final String BASE_URL = "/api/user";
 
 
@@ -52,26 +35,29 @@ class UserControllerTest {
     @Transactional
     void signUpTest() throws Exception {
         //given
-        String title = "Test title";
-        String content = "Test content";
-        String author = "gorany";
+        String email = "test@test.com";
+        String nickName = "테스트@@";
+        String phone = "010-1234-5678";
         UserDto.ReqSignUp signUpRequest = UserDto.ReqSignUp.builder()
-                .email("test@test.com")
-                .nickName("테스트@@")
-                .phone("010-1234-5678")
+                .email(email)
+                .nickName(nickName)
+                .phone(phone)
                 .password("testtest")
                 .build();
         //when
-//        doNothing().when(userService).signUp(signUpRequest);
-
-//        System.out.println("signUpRequest = " + signUpRequest);
-        System.out.println("signUpRequest = end");
         //then
-        mockMvc.perform(post("/api/user/signUp")
-                        .content(mapper.writeValueAsString(signUpRequest)) //HTTP Body에 데이터를 담는다
-                        .contentType(MediaType.APPLICATION_JSON) //보내는 데이터의 타입을 명시
+        mockMvc.perform(post(BASE_URL + "/signUp")
+                        .content(mapper.writeValueAsString(signUpRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.data.userId").value(1L))
+                .andExpect(jsonPath("$.data.email").value(email))
+                .andExpect(jsonPath("$.data.nickname").value(nickName))
+                .andExpect(jsonPath("$.data.phone").value(phone))
+                ;
     }
 }

@@ -50,7 +50,7 @@ public class UserDto {
         private String email;
 
         @Schema(description = "닉네임")
-        private String nickName;
+        private String nickname;
 
         @Schema(description = "휴대폰 번호")
         private String phone;
@@ -59,7 +59,7 @@ public class UserDto {
             return ResUserInfo.builder()
                     .userId(user.getId())
                     .email(user.getEmail())
-                    .nickName(user.getNickname())
+                    .nickname(user.getNickname())
                     .phone(user.getPhone())
                     .build();
         }
