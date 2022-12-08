@@ -42,4 +42,6 @@ public class User extends BaseEntity {
         this.nickname = nickname;
         this.phone = phone;
     }
+
+
 }

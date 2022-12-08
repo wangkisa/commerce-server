@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -55,4 +57,14 @@ public class UserService {
     }
 
 
+    public UserDto.ResUserInfo signIn(UserDto.ReqSignIn reqSignInDto) {
+
+//        boolean isExist = userRepository.existsByEmail(defaultReqSignInDto.getEmail());
+
+        User findUser = userRepository.findByEmail(reqSignInDto.getEmail())
+                .filter(it -> it.getPassword().matchesPassword(reqSignInDto.getPassword(), passwordEncoder))
+                .orElseThrow(() -> new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER_INFO));
+
+        return UserDto.ResUserInfo.fromUser(findUser);
+    }
 }

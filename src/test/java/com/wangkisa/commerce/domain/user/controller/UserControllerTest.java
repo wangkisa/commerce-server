@@ -1,6 +1,7 @@
 package com.wangkisa.commerce.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wangkisa.commerce.domain.common.code.StatusCode;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +53,7 @@ class UserControllerTest {
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.code").value(StatusCode.OK_CODE))
                 .andExpect(jsonPath("$.message").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.data.userId").value(1L))
                 .andExpect(jsonPath("$.data.email").value(email))

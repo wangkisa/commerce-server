@@ -64,4 +64,21 @@ public class UserDto {
                     .build();
         }
     }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class ReqSignIn {
+
+        @NotNull
+        @Email
+        @Schema(description = "이메일")
+        private String email;
+
+        @NotBlank
+        @Size(min = 6, max = 12, message = "비밀번호는 6글자에서 12글자 사이로 입력해야 합니다.")
+        @Schema(description = "비밀번호")
+        private String password;
+
+    }
 }

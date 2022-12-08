@@ -13,25 +13,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class})
-//@RunWith(SpringRunner.class)
-//@WebMvcTest({UserController.class})
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
 class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
-
-    @Mock
-    private SecurityConfig securityConfig;
 
     @InjectMocks
     UserService userService;
@@ -40,7 +36,6 @@ class UserServiceTest {
     void setUp() {
 //        userService = new UserServiceImpl(userRepository, jwtUtils, passwordEncoder);
 //        userService = new UserServiceImpl();
-
     }
 
     private UserDto.ReqSignUp reqSignUpUserDto() {
@@ -83,21 +78,23 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("회원가입 성공 테스트")
-    @Transactional
-    public void signUp_SucTest() {
+    @DisplayName("이메일 혹은 비밀번호 틀린 경우 경우 회원로그인 실패 테스트")
+    public void signIn_WrongEmailPw_FailTest() {
         // given
-        UserDto.ReqSignUp defaultReqSignUpDto = reqSignUpUserDto();
+        UserDto.ReqSignIn defaultReqSignInDto = UserDto.ReqSignIn.builder()
+                .email("test@test.com")
+                .password("testtest")
+                .build();
 
-//        Mockito.when(securityConfig.passwordEncoder()).thenReturn(new BCryptPasswordEncoder());
+//        when(userRepository.save(Mockito.any(User.class))).thenAnswer(i -> i.getArguments()[0]);
+
         // when
-        UserDto.ResUserInfo resUserInfo = userService.signUp(defaultReqSignUpDto);
+        CustomException customException = assertThrows(CustomException.class, () -> userService.signIn(defaultReqSignInDto));
 
         // then
-        verify(userRepository, times(1)).save(any(User.class));
-
-//        Assertions.assertThat(resUserInfo.getEmail()).isEqualTo(defaultReqSignUpDto.getEmail());
-//        Assertions.assertThat(resUserInfo.getNickName()).isEqualTo(defaultReqSignUpDto.getNickName());
-//        Assertions.assertThat(resUserInfo.getPhone()).isEqualTo(defaultReqSignUpDto.getPhone());
+        Assertions.assertThat(customException.getCode()).isEqualTo(UserErrorCode.ERROR_NOT_FOUND_USER_INFO.getCode());
+        Assertions.assertThat(customException.getMessage()).isEqualTo(UserErrorCode.ERROR_NOT_FOUND_USER_INFO.getMsg());
     }
+
+
 }
