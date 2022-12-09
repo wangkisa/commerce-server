@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.domain.user.service;
 
+import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
 import com.wangkisa.commerce.domain.user.code.UserErrorCode;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import com.wangkisa.commerce.domain.user.entity.Password;
@@ -20,6 +21,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional(readOnly = true)
     public boolean checkDuplicateEmail(String email) {
@@ -53,18 +56,19 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        return UserDto.ResUserInfo.fromUser(savedUser);
+        return UserDto.ResUserInfo.fromUser(savedUser, null);
     }
 
 
+    @Transactional(readOnly = true)
     public UserDto.ResUserInfo signIn(UserDto.ReqSignIn reqSignInDto) {
-
-//        boolean isExist = userRepository.existsByEmail(defaultReqSignInDto.getEmail());
 
         User findUser = userRepository.findByEmail(reqSignInDto.getEmail())
                 .filter(it -> it.getPassword().matchesPassword(reqSignInDto.getPassword(), passwordEncoder))
                 .orElseThrow(() -> new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER_INFO));
 
-        return UserDto.ResUserInfo.fromUser(findUser);
+        final var jwtModel = jwtTokenProvider.createToken(findUser.getEmail());
+
+        return UserDto.ResUserInfo.fromUser(findUser, jwtModel);
     }
 }

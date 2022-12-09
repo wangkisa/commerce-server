@@ -1,10 +1,12 @@
 package com.wangkisa.commerce.domain.user.dto;
 
 import com.wangkisa.commerce.domain.user.entity.User;
+import com.wangkisa.commerce.security.JwtModel;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 
@@ -15,6 +17,7 @@ public class UserDto {
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class ReqSignUp {
 
@@ -55,18 +58,26 @@ public class UserDto {
         @Schema(description = "휴대폰 번호")
         private String phone;
 
-        public static ResUserInfo fromUser(User user) {
+        @Schema(description = "억세스 토큰")
+        String accessToken;
+        @Schema(description = "리프레시 토큰")
+        String refreshToken;
+
+        public static ResUserInfo fromUser(User user, JwtModel jwtModel) {
             return ResUserInfo.builder()
                     .userId(user.getId())
                     .email(user.getEmail())
                     .nickname(user.getNickname())
                     .phone(user.getPhone())
+                    .accessToken(jwtModel != null ? jwtModel.getAccessToken() : null)
+                    .refreshToken(jwtModel != null ? jwtModel.getRefreshToken(): null)
                     .build();
         }
     }
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     @Builder
     public static class ReqSignIn {
 
