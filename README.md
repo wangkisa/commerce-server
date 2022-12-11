@@ -36,4 +36,10 @@ Amazon Linux 2
 
 ### 로그인 / 로그아웃
 
-로그인 / 로그아웃이 가능하다.
+이메일, 비밀번호를 이용하여 로그인한다.
+
+### Product 
+
+Product 목록을 조회한다.(Product 등록은 Admin 영역이라 제외)
+
+Product 상세를 조회한다.
