@@ -5,7 +5,6 @@ import com.wangkisa.commerce.domain.common.code.StatusCode;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import org.hamcrest.core.IsNull;
-import org.hibernate.hql.internal.ast.tree.IsNotNullLogicOperatorNode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,7 @@ class UserControllerTest {
     @DisplayName("회원로그인 성공 테스트")
     @Transactional
     void signInTest() throws Exception {
-        //given
+        // given
         String email = "test@test.com";
         String nickName = "테스트@@";
         String phone = "010-1234-5678";
@@ -87,8 +86,8 @@ class UserControllerTest {
 
         userService.signUp(signUpRequest);
 
-        //when
-        //then
+        // when
+        // then
         mockMvc.perform(post(BASE_URL + "/signIn")
                         .content(mapper.writeValueAsString(signInRequest))
                         .contentType(MediaType.APPLICATION_JSON)

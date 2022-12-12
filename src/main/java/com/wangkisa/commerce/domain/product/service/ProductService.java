@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
 
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     /**
      * 상품 목록 조회
