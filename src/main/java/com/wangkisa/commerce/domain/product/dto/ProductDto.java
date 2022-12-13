@@ -16,7 +16,7 @@ public class ProductDto {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProductListResponseDTO {
+    public static class ResProductList {
 
         @Schema(description = "상품 목록")
         List<ResDefaultList> productList;
@@ -40,6 +40,42 @@ public class ProductDto {
                     .productId(product.getId())
                     .name(product.getName())
                     .price(product.getPrice())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReqProductDetail {
+
+        @Schema(description = "상품 아이디")
+        private Long productId;
+
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ResProductDetail {
+
+        @Schema(description = "상품 아이디")
+        private Long productId;
+        @Schema(description = "상품 이름")
+        private String name;
+        @Schema(description = "상품 가격")
+        private BigDecimal price;
+        @Schema(description = "상품 색깔")
+        private String color;
+
+        public static ResProductDetail fromProduct(Product product) {
+            return ResProductDetail.builder()
+                    .productId(product.getId())
+                    .name(product.getName())
+                    .price(product.getPrice())
+                    .color(product.getColor())
                     .build();
         }
     }

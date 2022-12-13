@@ -1,12 +1,17 @@
 package com.wangkisa.commerce.domain.product.service;
 
+import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.dto.ProductDto;
+import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
+import com.wangkisa.commerce.domain.user.code.UserErrorCode;
+import com.wangkisa.commerce.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,11 +24,23 @@ public class ProductService {
      * 상품 목록 조회
      */
     @Transactional(readOnly = true)
-    public ProductDto.ProductListResponseDTO getProductList() {
+    public ProductDto.ResProductList getProductList() {
         List<ProductDto.ResDefaultList> productList = productRepository.findAll().stream().map(product ->
                 ProductDto.ResDefaultList.fromProduct(product)).collect(Collectors.toList());
-        return ProductDto.ProductListResponseDTO.builder()
+        return ProductDto.ResProductList.builder()
                 .productList(productList)
                 .build();
+    }
+
+    /**
+     * 상품 상세 조회
+     */
+    @Transactional(readOnly = true)
+    public ProductDto.ResProductDetail getProductDetail(ProductDto.ReqProductDetail reqProductDetail) {
+
+        Product product = productRepository.findById(reqProductDetail.getProductId())
+                .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+
+        return ProductDto.ResProductDetail.fromProduct(product);
     }
 }

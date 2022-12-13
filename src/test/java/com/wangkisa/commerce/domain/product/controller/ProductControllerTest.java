@@ -1,13 +1,16 @@
 package com.wangkisa.commerce.domain.product.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wangkisa.commerce.domain.common.code.StatusCode;
 import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
+import com.wangkisa.commerce.domain.product.dto.ProductDto;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.domain.product.service.ProductService;
 import com.wangkisa.commerce.domain.user.dto.UserDto;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,19 @@ public class ProductControllerTest {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private UserService userService;
+    private UserDto.ResUserInfo userMock;
+    private Product productMock;
+    private String accessToken;
+
+    @Autowired
+    ObjectMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        userMock = createUserMock();
+        productMock = createProductMock();
+        accessToken = "Bearer " + jwtTokenProvider.createToken(userMock.getEmail()).getAccessToken();
+    }
 
     @Transactional
     private Product createProductMock() {
@@ -71,14 +87,11 @@ public class ProductControllerTest {
     @Transactional
     void getProductListTest() throws Exception {
         // given
-        UserDto.ResUserInfo userMock = createUserMock();
-        Product productMock = createProductMock();
 
         // when
         // then
-        String accessToken = jwtTokenProvider.createToken(userMock.getEmail()).getAccessToken();
         mockMvc.perform(post(BASE_URL + "/getProductList")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                        .header(HttpHeaders.AUTHORIZATION, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
@@ -87,7 +100,32 @@ public class ProductControllerTest {
                 .andExpect(jsonPath("$.message").value(IsNull.nullValue()))
                 .andExpect(jsonPath("$.data.productList[0].productId").value(productMock.getId()))
                 .andExpect(jsonPath("$.data.productList[0].name").value(productMock.getName()))
-                .andExpect(jsonPath("$.data.productList[0].price").value(productMock.getPrice()))
-                ;
+                .andExpect(jsonPath("$.data.productList[0].price").value(productMock.getPrice()));
+    }
+
+    @Test
+    @DisplayName("상품 상세 조회 API 테스트")
+    @Transactional
+    void getProductDetailTest() throws Exception {
+        // given
+        ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
+                .productId(productMock.getId())
+                .build();
+
+        // when
+        // then
+        mockMvc.perform(post(BASE_URL + "/getProductDetail")
+                        .header(HttpHeaders.AUTHORIZATION, accessToken)
+                        .content(mapper.writeValueAsString(reqProductDetail))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(StatusCode.OK_CODE))
+                .andExpect(jsonPath("$.message").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.data.productId").value(productMock.getId()))
+                .andExpect(jsonPath("$.data.name").value(productMock.getName()))
+                .andExpect(jsonPath("$.data.price").value(productMock.getPrice()))
+                .andExpect(jsonPath("$.data.color").value(productMock.getColor()));
     }
 }
