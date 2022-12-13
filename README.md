@@ -43,3 +43,17 @@ Amazon Linux 2
 Product 목록을 조회한다.(Product 등록은 Admin 영역이라 제외)
 
 Product 상세를 조회한다.
+
+### Order
+
+유저가 Product 을 구매한다.
+
+구매하기 위한 조건
+
+* 상품 수량이 1 이상인 경우 구매 가능
+* 유저가 보유한 금액이 상품 금액 이상인 경우 가능
+
+유저가 구매한 Product 내역 상세 조회
+
+### 
+

@@ -55,6 +55,7 @@ class ProductServiceTest {
     void productDetailNotFoundTest() {
         // given
         Product mockProduct = createProductMock();
+        // 상품 아이디에 1을 더해서 엉뚱한 값으로 할당
         ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
                 .productId(mockProduct.getId() + 1)
                 .build();
