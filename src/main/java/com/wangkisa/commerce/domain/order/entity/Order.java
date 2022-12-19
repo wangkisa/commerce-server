@@ -1,6 +1,7 @@
 package com.wangkisa.commerce.domain.order.entity;
 
 import com.wangkisa.commerce.domain.common.entity.BaseEntity;
+import com.wangkisa.commerce.domain.common.util.BigDecimalUtil;
 import com.wangkisa.commerce.domain.order.code.OrderErrorCode;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.user.entity.User;
@@ -44,11 +45,14 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    @Embedded
+    private DeliveryInfo deliveryInfo;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {PERSIST})
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
     @Builder
-    public Order (User user) {
+    public Order (User user, DeliveryInfo deliveryInfo) {
         if (user == null) {
             throw new CustomException(OrderErrorCode.ERROR_NOT_FOUND_USER);
         }
@@ -56,16 +60,17 @@ public class Order extends BaseEntity {
         this.user = user;
         this.orderDateTime = LocalDateTime.now();
         this.orderStatus = OrderStatus.ORDER_INIT;
+        this.deliveryInfo = deliveryInfo;
     }
 
-    public OrderProduct addOrderProduct(Product product, Integer productQuantity, BigDecimal totalPrice) {
+    public OrderProduct addOrderProduct(Product product, Integer productQuantity) {
         OrderProduct orderProduct = OrderProduct.builder()
                 .order(this)
                 .product(product)
                 .productName(product.getName())
                 .productQuantity(productQuantity)
                 .productPrice(product.getPrice())
-                .totalPrice(totalPrice)
+                .totalPrice(BigDecimalUtil.multiply(product.getPrice(), productQuantity))
                 .build();
         this.orderProducts.add(orderProduct);
         return orderProduct;
