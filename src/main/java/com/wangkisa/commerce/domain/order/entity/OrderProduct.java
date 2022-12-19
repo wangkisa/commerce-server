@@ -41,7 +41,6 @@ public class OrderProduct extends BaseEntity {
     private BigDecimal totalPrice;
 
     @Builder
-
     public OrderProduct(Order order, Product product, Integer productQuantity, String productName, BigDecimal productPrice, BigDecimal totalPrice) {
         this.order = order;
         this.product = product;

@@ -46,6 +46,8 @@ Product 상세를 조회한다.
 
 ### Order
 
+Product 선택 후 Order를 등록해서 주문서를 출력한다.
+
 유저가 Product 을 구매한다.
 
 구매하기 위한 조건
