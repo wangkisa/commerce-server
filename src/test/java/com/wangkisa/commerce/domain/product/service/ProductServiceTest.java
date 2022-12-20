@@ -4,7 +4,6 @@ import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.dto.ProductDto;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
-import com.wangkisa.commerce.domain.user.code.UserErrorCode;
 import com.wangkisa.commerce.exception.CustomException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +30,7 @@ class ProductServiceTest {
     @Transactional
     void productListTest() {
         // given
-        Product mockProduct = createProductMock();
+        Product mockProduct = createProduct();
         // when
         ProductDto.ResProductList productList = productService.getProductList();
         // then
@@ -40,7 +39,7 @@ class ProductServiceTest {
         Assertions.assertThat(productList.getProductList().get(0).getPrice()).isEqualTo(mockProduct.getPrice());
     }
     @Transactional
-    private Product createProductMock() {
+    private Product createProduct() {
         return productRepository.save(Product.builder()
                 .name("테스트 상품")
                 .color("red")
@@ -54,7 +53,7 @@ class ProductServiceTest {
     @Transactional
     void productDetailNotFoundTest() {
         // given
-        Product mockProduct = createProductMock();
+        Product mockProduct = createProduct();
         // 상품 아이디에 1을 더해서 엉뚱한 값으로 할당
         ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
                 .productId(mockProduct.getId() + 1)
@@ -73,17 +72,17 @@ class ProductServiceTest {
     @Transactional
     void productDetailTest() {
         // given
-        Product mockProduct = createProductMock();
+        Product product = createProduct();
         ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
-                .productId(mockProduct.getId())
+                .productId(product.getId())
                 .build();
 
         // when
         ProductDto.ResProductDetail productDetailDto = productService.getProductDetail(reqProductDetail);
         // then
-        Assertions.assertThat(productDetailDto.getProductId()).isEqualTo(mockProduct.getId());
-        Assertions.assertThat(productDetailDto.getName()).isEqualTo(mockProduct.getName());
-        Assertions.assertThat(productDetailDto.getColor()).isEqualTo(mockProduct.getColor());
-        Assertions.assertThat(productDetailDto.getPrice()).isEqualTo(mockProduct.getPrice());
+        Assertions.assertThat(productDetailDto.getProductId()).isEqualTo(product.getId());
+        Assertions.assertThat(productDetailDto.getName()).isEqualTo(product.getName());
+        Assertions.assertThat(productDetailDto.getColor()).isEqualTo(product.getColor());
+        Assertions.assertThat(productDetailDto.getPrice()).isEqualTo(product.getPrice());
     }
 }
