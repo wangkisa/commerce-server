@@ -2,7 +2,7 @@ package com.wangkisa.commerce.domain.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wangkisa.commerce.domain.common.code.StatusCode;
-import com.wangkisa.commerce.domain.user.dto.UserDto;
+import com.wangkisa.commerce.domain.user.dto.UserDTO;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +43,7 @@ class UserControllerTest {
         String email = "test@test.com";
         String nickName = "테스트@@";
         String phone = "010-1234-5678";
-        UserDto.ReqSignUp signUpRequest = UserDto.ReqSignUp.builder()
+        UserDTO.ReqSignUp signUpRequest = UserDTO.ReqSignUp.builder()
                 .email(email)
                 .nickName(nickName)
                 .phone(phone)
@@ -72,12 +72,12 @@ class UserControllerTest {
         String email = "test@test.com";
         String nickName = "테스트@@";
         String phone = "010-1234-5678";
-        UserDto.ReqSignIn signInRequest = UserDto.ReqSignIn.builder()
+        UserDTO.ReqSignIn signInRequest = UserDTO.ReqSignIn.builder()
                 .email(email)
                 .password("testtest")
                 .build();
 
-        UserDto.ReqSignUp signUpRequest = UserDto.ReqSignUp.builder()
+        UserDTO.ReqSignUp signUpRequest = UserDTO.ReqSignUp.builder()
                 .email(signInRequest.getEmail())
                 .nickName(nickName)
                 .password(signInRequest.getPassword())

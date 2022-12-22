@@ -2,7 +2,7 @@ package com.wangkisa.commerce.domain.user.service;
 
 import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
 import com.wangkisa.commerce.domain.user.code.UserErrorCode;
-import com.wangkisa.commerce.domain.user.dto.UserDto;
+import com.wangkisa.commerce.domain.user.dto.UserDTO;
 import com.wangkisa.commerce.domain.user.entity.Password;
 import com.wangkisa.commerce.domain.user.entity.User;
 import com.wangkisa.commerce.domain.user.repository.UserRepository;
@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +36,7 @@ public class UserService {
      * 이메일 회원가입
      */
     @Transactional
-    public UserDto.ResUserInfo signUp(UserDto.ReqSignUp reqSignUp) {
+    public UserDTO.ResUserInfo signUp(UserDTO.ReqSignUp reqSignUp) {
 
         if (checkDuplicateEmail(reqSignUp.getEmail())) {
             throw new CustomException(UserErrorCode.ERROR_SIGNUP_DUPLICATE_EMAIL);
@@ -56,12 +54,12 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        return UserDto.ResUserInfo.fromUser(savedUser, null);
+        return UserDTO.ResUserInfo.fromUser(savedUser, null);
     }
 
 
     @Transactional(readOnly = true)
-    public UserDto.ResUserInfo signIn(UserDto.ReqSignIn reqSignInDto) {
+    public UserDTO.ResUserInfo signIn(UserDTO.ReqSignIn reqSignInDto) {
 
         User findUser = userRepository.findByEmail(reqSignInDto.getEmail())
                 .filter(it -> it.getPassword().matchesPassword(reqSignInDto.getPassword(), passwordEncoder))
@@ -69,6 +67,6 @@ public class UserService {
 
         final var jwtModel = jwtTokenProvider.createToken(findUser.getEmail());
 
-        return UserDto.ResUserInfo.fromUser(findUser, jwtModel);
+        return UserDTO.ResUserInfo.fromUser(findUser, jwtModel);
     }
 }

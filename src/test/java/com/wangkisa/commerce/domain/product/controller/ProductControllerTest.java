@@ -3,11 +3,11 @@ package com.wangkisa.commerce.domain.product.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wangkisa.commerce.domain.common.code.StatusCode;
 import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
-import com.wangkisa.commerce.domain.product.dto.ProductDto;
+import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.domain.product.service.ProductService;
-import com.wangkisa.commerce.domain.user.dto.UserDto;
+import com.wangkisa.commerce.domain.user.dto.UserDTO;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ public class ProductControllerTest {
     private JwtTokenProvider jwtTokenProvider;
     @Autowired
     private UserService userService;
-    private UserDto.ResUserInfo userMock;
+    private UserDTO.ResUserInfo userMock;
     private Product productMock;
     private String accessToken;
 
@@ -69,11 +69,11 @@ public class ProductControllerTest {
                 .build());
     }
     @Transactional
-    private UserDto.ResUserInfo createUserMock() {
+    private UserDTO.ResUserInfo createUserMock() {
         String email = "test@test.com";
         String nickName = "테스트@@";
         String phone = "010-1234-5678";
-        UserDto.ReqSignUp signUpRequest = UserDto.ReqSignUp.builder()
+        UserDTO.ReqSignUp signUpRequest = UserDTO.ReqSignUp.builder()
                 .email(email)
                 .nickName(nickName)
                 .password("testtest")
@@ -108,7 +108,7 @@ public class ProductControllerTest {
     @Transactional
     void getProductDetailTest() throws Exception {
         // given
-        ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
+        ProductDTO.ReqProductDetail reqProductDetail = ProductDTO.ReqProductDetail.builder()
                 .productId(productMock.getId())
                 .build();
 

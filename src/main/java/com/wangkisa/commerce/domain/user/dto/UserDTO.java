@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 @Getter
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class UserDTO {
 
     @Getter
     @AllArgsConstructor

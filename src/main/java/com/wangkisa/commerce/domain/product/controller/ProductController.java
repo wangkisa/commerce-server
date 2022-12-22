@@ -1,7 +1,7 @@
 package com.wangkisa.commerce.domain.product.controller;
 
 import com.wangkisa.commerce.domain.common.response.ApiResponse;
-import com.wangkisa.commerce.domain.product.dto.ProductDto;
+import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ public class ProductController {
 
     @Operation(summary = "상품 목록 조회")
     @PostMapping(value = "/getProductList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ProductDto.ResProductList> getProductList() {
+    public ApiResponse<ProductDTO.ResProductList> getProductList() {
         return ApiResponse.success(productService.getProductList());
     }
 
     @Operation(summary = "상품 상세 조회")
     @PostMapping(value = "/getProductDetail", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ProductDto.ResProductDetail> getProductDetail(@Validated @RequestBody ProductDto.ReqProductDetail reqProductDetail) {
+    public ApiResponse<ProductDTO.ResProductDetail> getProductDetail(@Validated @RequestBody ProductDTO.ReqProductDetail reqProductDetail) {
         return ApiResponse.success(productService.getProductDetail(reqProductDetail));
     }
 

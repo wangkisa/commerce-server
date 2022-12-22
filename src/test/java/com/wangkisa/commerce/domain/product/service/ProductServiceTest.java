@@ -1,7 +1,7 @@
 package com.wangkisa.commerce.domain.product.service;
 
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
-import com.wangkisa.commerce.domain.product.dto.ProductDto;
+import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.exception.CustomException;
@@ -32,7 +32,7 @@ class ProductServiceTest {
         // given
         Product mockProduct = createProduct();
         // when
-        ProductDto.ResProductList productList = productService.getProductList();
+        ProductDTO.ResProductList productList = productService.getProductList();
         // then
         Assertions.assertThat(productList.getProductList().size()).isEqualTo(1);
         Assertions.assertThat(productList.getProductList().get(0).getName()).isEqualTo(mockProduct.getName());
@@ -55,7 +55,7 @@ class ProductServiceTest {
         // given
         Product mockProduct = createProduct();
         // 상품 아이디에 1을 더해서 엉뚱한 값으로 할당
-        ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
+        ProductDTO.ReqProductDetail reqProductDetail = ProductDTO.ReqProductDetail.builder()
                 .productId(mockProduct.getId() + 1)
                 .build();
 
@@ -73,12 +73,12 @@ class ProductServiceTest {
     void productDetailTest() {
         // given
         Product product = createProduct();
-        ProductDto.ReqProductDetail reqProductDetail = ProductDto.ReqProductDetail.builder()
+        ProductDTO.ReqProductDetail reqProductDetail = ProductDTO.ReqProductDetail.builder()
                 .productId(product.getId())
                 .build();
 
         // when
-        ProductDto.ResProductDetail productDetailDto = productService.getProductDetail(reqProductDetail);
+        ProductDTO.ResProductDetail productDetailDto = productService.getProductDetail(reqProductDetail);
         // then
         Assertions.assertThat(productDetailDto.getProductId()).isEqualTo(product.getId());
         Assertions.assertThat(productDetailDto.getName()).isEqualTo(product.getName());

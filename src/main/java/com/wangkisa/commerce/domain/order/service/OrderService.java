@@ -1,6 +1,8 @@
 package com.wangkisa.commerce.domain.order.service;
 
+import com.wangkisa.commerce.domain.order.dto.OrderDTO;
+
 public interface OrderService {
 
-    void registerOrder();
+    OrderDTO.ResOrderInfo registerOrder(OrderDTO.ReqRegisterOrder reqRegisterOrder, Long userId);
 }

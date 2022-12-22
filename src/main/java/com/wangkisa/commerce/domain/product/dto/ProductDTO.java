@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class ProductDto {
+public class ProductDTO {
 
     @Getter
     @Builder

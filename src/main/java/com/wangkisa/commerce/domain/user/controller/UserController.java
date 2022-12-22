@@ -1,7 +1,7 @@
 package com.wangkisa.commerce.domain.user.controller;
 
 import com.wangkisa.commerce.domain.common.response.ApiResponse;
-import com.wangkisa.commerce.domain.user.dto.UserDto;
+import com.wangkisa.commerce.domain.user.dto.UserDTO;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ public class UserController {
 
     @Operation(summary = "회원 가입")
     @PostMapping(value = "/signUp", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<UserDto.ResUserInfo> signUp(@Validated @RequestBody UserDto.ReqSignUp requestDto) {
+    public ApiResponse<UserDTO.ResUserInfo> signUp(@Validated @RequestBody UserDTO.ReqSignUp requestDto) {
         return ApiResponse.success(userService.signUp(requestDto));
     }
 
     @Operation(summary = "회원 로그인")
     @PostMapping(value = "/signIn", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<UserDto.ResUserInfo> signIn(@Validated @RequestBody UserDto.ReqSignIn requestDto) {
+    public ApiResponse<UserDTO.ResUserInfo> signIn(@Validated @RequestBody UserDTO.ReqSignIn requestDto) {
         return ApiResponse.success(userService.signIn(requestDto));
     }
 }

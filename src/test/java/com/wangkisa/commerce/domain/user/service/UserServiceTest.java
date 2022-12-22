@@ -1,9 +1,7 @@
 package com.wangkisa.commerce.domain.user.service;
 
-import com.wangkisa.commerce.security.SecurityConfig;
 import com.wangkisa.commerce.domain.user.code.UserErrorCode;
-import com.wangkisa.commerce.domain.user.dto.UserDto;
-import com.wangkisa.commerce.domain.user.entity.User;
+import com.wangkisa.commerce.domain.user.dto.UserDTO;
 import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import com.wangkisa.commerce.exception.CustomException;
 import org.assertj.core.api.Assertions;
@@ -13,15 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
 class UserServiceTest {
@@ -38,8 +31,8 @@ class UserServiceTest {
 //        userService = new UserServiceImpl();
     }
 
-    private UserDto.ReqSignUp reqSignUpUserDto() {
-        return UserDto.ReqSignUp.builder()
+    private UserDTO.ReqSignUp getReqSignUpUserDTO() {
+        return UserDTO.ReqSignUp.builder()
                 .email("test@test.com")
                 .nickName("테스트 닉네임")
                 .phone("010-1234-5678")
@@ -51,7 +44,7 @@ class UserServiceTest {
     @DisplayName("이메일이 중복인 경우 회원가입 실패 테스트")
     public void signUp_EmailDup_FailTest() {
         // given
-        UserDto.ReqSignUp defaultReqSignUpDto = reqSignUpUserDto();
+        UserDTO.ReqSignUp defaultReqSignUpDto = getReqSignUpUserDTO();
         when(userRepository.existsByEmail(defaultReqSignUpDto.getEmail())).thenReturn(true);
 
         // when
@@ -66,7 +59,7 @@ class UserServiceTest {
     @DisplayName("닉네임이 중복인 경우 회원가입 실패 테스트")
     public void signUp_NickNameDup_FailTest() {
         // given
-        UserDto.ReqSignUp defaultReqSignUpDto = reqSignUpUserDto();
+        UserDTO.ReqSignUp defaultReqSignUpDto = getReqSignUpUserDTO();
         when(userRepository.existsByNickname(defaultReqSignUpDto.getNickName())).thenReturn(true);
 
         // when
@@ -81,7 +74,7 @@ class UserServiceTest {
     @DisplayName("이메일 혹은 비밀번호 틀린 경우 경우 회원로그인 실패 테스트")
     public void signIn_WrongEmailPw_FailTest() {
         // given
-        UserDto.ReqSignIn defaultReqSignInDto = UserDto.ReqSignIn.builder()
+        UserDTO.ReqSignIn defaultReqSignInDto = UserDTO.ReqSignIn.builder()
                 .email("test@test.com")
                 .password("testtest")
                 .build();
