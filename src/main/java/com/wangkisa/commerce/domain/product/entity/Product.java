@@ -1,6 +1,8 @@
 package com.wangkisa.commerce.domain.product.entity;
 
 import com.wangkisa.commerce.domain.common.entity.BaseEntity;
+import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
+import com.wangkisa.commerce.exception.CustomException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,5 +39,11 @@ public class Product extends BaseEntity {
         this.color = color;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public void checkQuantity(Integer reqQuantity) {
+        if (reqQuantity > this.quantity ) {
+            throw new CustomException(ProductErrorCode.ERROR_LACK_OF_PRODUCT);
+        }
     }
 }
