@@ -49,4 +49,5 @@ public class OrderProduct extends BaseEntity {
         this.productPrice = productPrice;
         this.totalPrice = totalPrice;
     }
+
 }

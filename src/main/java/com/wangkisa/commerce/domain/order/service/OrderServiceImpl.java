@@ -1,6 +1,7 @@
 package com.wangkisa.commerce.domain.order.service;
 
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
+import com.wangkisa.commerce.domain.order.entity.DeliveryInfo;
 import com.wangkisa.commerce.domain.order.entity.Order;
 import com.wangkisa.commerce.domain.order.repository.OrderRepository;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
@@ -31,20 +32,22 @@ public class OrderServiceImpl implements OrderService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER_INFO));
 
-        List<Product> productList = reqRegisterOrder.getOrderProductList().stream().map(reqProduct ->
-                {
-                    Product product = productRepository.findById(reqProduct.getProductId())
-                            .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
-                    product.checkQuantity(reqProduct.getProductQuantity());
-                    return product;
-                }
-        ).collect(Collectors.toList());
-
+        DeliveryInfo deliveryInfo = DeliveryInfo.builder()
+                .receiverName(reqRegisterOrder.getReceiverName())
+                .receiverAddress(reqRegisterOrder.getReceiverAddress())
+                .etcMessage(reqRegisterOrder.getEtcMessage())
+                .build();
         Order order = Order.builder()
                 .user(findUser)
+                .deliveryInfo(deliveryInfo)
                 .build();
+        Order savedOrder = orderRepository.save(order);
 
-        orderRepository.save(order);
+        reqRegisterOrder.getOrderProductList().stream().forEach(reqProduct ->{
+                Product product = productRepository.findById(reqProduct.getProductId()).orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+                savedOrder.addOrderProduct(product, reqProduct.getProductQuantity());
+            }
+        );
         return null;
     }
 }

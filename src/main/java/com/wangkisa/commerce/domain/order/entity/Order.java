@@ -64,6 +64,9 @@ public class Order extends BaseEntity {
     }
 
     public OrderProduct addOrderProduct(Product product, Integer productQuantity) {
+        // 제품 수량 체크
+        product.checkQuantity(productQuantity);
+
         OrderProduct orderProduct = OrderProduct.builder()
                 .order(this)
                 .product(product)
