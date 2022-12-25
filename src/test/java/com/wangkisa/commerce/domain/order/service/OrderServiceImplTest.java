@@ -131,6 +131,13 @@ class OrderServiceImplTest {
         // then
         Assertions.assertThat(resOrderInfo.getReceiverName()).isEqualTo(resOrderInfo.getReceiverName());
         Assertions.assertThat(resOrderInfo.getReceiverAddress()).isEqualTo(resOrderInfo.getReceiverAddress());
+        Assertions.assertThat(resOrderInfo.getEtcMessage()).isEqualTo(resOrderInfo.getEtcMessage());
+        OrderDTO.OrderProductInfo orderProductInfo = resOrderInfo.getOrderProductList().get(0);
+        Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductId()).isEqualTo(orderProductInfo.getProductId());
+        Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductName()).isEqualTo(orderProductInfo.getProductName());
+        Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductPrice()).isEqualTo(orderProductInfo.getProductPrice());
+        Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductQuantity()).isEqualTo(orderProductInfo.getProductQuantity());
+
     }
 
 

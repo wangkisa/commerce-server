@@ -3,6 +3,7 @@ package com.wangkisa.commerce.domain.order.service;
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
 import com.wangkisa.commerce.domain.order.entity.DeliveryInfo;
 import com.wangkisa.commerce.domain.order.entity.Order;
+import com.wangkisa.commerce.domain.order.entity.OrderProduct;
 import com.wangkisa.commerce.domain.order.repository.OrderRepository;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.entity.Product;
@@ -13,6 +14,7 @@ import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import com.wangkisa.commerce.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
 
     @Override
+    @Transactional
     public OrderDTO.ResOrderInfo registerOrder(OrderDTO.ReqRegisterOrder reqRegisterOrder, Long userId) {
 
         User findUser = userRepository.findById(userId)
@@ -43,11 +46,12 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         Order savedOrder = orderRepository.save(order);
 
-        reqRegisterOrder.getOrderProductList().stream().forEach(reqProduct ->{
-                Product product = productRepository.findById(reqProduct.getProductId()).orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
-                savedOrder.addOrderProduct(product, reqProduct.getProductQuantity());
-            }
-        );
-        return null;
+        List<OrderDTO.OrderProductInfo> orderProductInfoList = reqRegisterOrder.getOrderProductList().stream().map(reqProduct -> {
+                    Product product = productRepository.findById(reqProduct.getProductId()).orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+                    OrderProduct savedOrderProduct = savedOrder.addOrderProduct(product, reqProduct.getProductQuantity());
+                    return OrderDTO.OrderProductInfo.fromOrderProduct(savedOrderProduct);
+                }
+        ).collect(Collectors.toList());
+        return OrderDTO.ResOrderInfo.fromOrder(savedOrder, orderProductInfoList);
     }
 }
