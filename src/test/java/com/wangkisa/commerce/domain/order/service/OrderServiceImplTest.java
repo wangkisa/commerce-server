@@ -93,7 +93,7 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("주문 등록시 수량 부족 테스트")
+    @DisplayName("주문 등록시 수량 부족 실패 테스트")
     @Transactional
     void registerOrderQuantityErrorTest() {
         // given
@@ -113,8 +113,40 @@ class OrderServiceImplTest {
         CustomException customException = assertThrows(CustomException.class, () -> orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId()));
 
         // then
-        Assertions.assertThat(customException.getCode()).isEqualTo(ProductErrorCode.ERROR_LACK_OF_PRODUCT.getCode());
-        Assertions.assertThat(customException.getMessage()).isEqualTo(ProductErrorCode.ERROR_LACK_OF_PRODUCT.getMsg());
+        Assertions.assertThat(customException.getCode()).isEqualTo(ProductErrorCode.ERROR_LACK_OF_PRODUCT_QUANTITY.getCode());
+        Assertions.assertThat(customException.getMessage()).isEqualTo(ProductErrorCode.ERROR_LACK_OF_PRODUCT_QUANTITY.getMsg());
+    }
+
+    @Test
+    @DisplayName("주문 등록시 상품 수량이 0인 경우 실패 테스트")
+    @Transactional
+    void registerOrderZeroQuantityErrorTest() {
+        // given
+        // 등록된 상품 수량이 0 으로 설정
+        Product savedProduct = productRepository.save(Product.builder()
+                .name("테스트 상품2")
+                .color("blue")
+                .quantity(0)
+                .price(BigDecimal.valueOf(3000))
+                .build());
+
+        OrderDTO.RegisterOrderProduct reqOrderProduct = OrderDTO.RegisterOrderProduct.builder()
+                .productId(savedProduct.getId())
+                .productQuantity(1)
+                .productName(savedProduct.getName())
+                .productPrice(savedProduct.getPrice().longValue())
+                .build();
+        List<OrderDTO.RegisterOrderProduct> orderProductList = new ArrayList<>();
+        orderProductList.add(reqOrderProduct);
+        OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(orderProductList);
+
+        // when
+        // 주문 등록
+        CustomException customException = assertThrows(CustomException.class, () -> orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId()));
+
+        // then
+        Assertions.assertThat(customException.getCode()).isEqualTo(ProductErrorCode.ERROR_NONE_OF_PRODUCT_QUANTITY.getCode());
+        Assertions.assertThat(customException.getMessage()).isEqualTo(ProductErrorCode.ERROR_NONE_OF_PRODUCT_QUANTITY.getMsg());
     }
 
     @Test
@@ -127,12 +159,13 @@ class OrderServiceImplTest {
         // when
         // 주문 등록
         OrderDTO.ResOrderInfo resOrderInfo = orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId());
+        OrderDTO.OrderProductInfo orderProductInfo = resOrderInfo.getOrderProductList().get(0);
 
         // then
         Assertions.assertThat(resOrderInfo.getReceiverName()).isEqualTo(resOrderInfo.getReceiverName());
         Assertions.assertThat(resOrderInfo.getReceiverAddress()).isEqualTo(resOrderInfo.getReceiverAddress());
         Assertions.assertThat(resOrderInfo.getEtcMessage()).isEqualTo(resOrderInfo.getEtcMessage());
-        OrderDTO.OrderProductInfo orderProductInfo = resOrderInfo.getOrderProductList().get(0);
+
         Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductId()).isEqualTo(orderProductInfo.getProductId());
         Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductName()).isEqualTo(orderProductInfo.getProductName());
         Assertions.assertThat(resOrderInfo.getOrderProductList().get(0).getProductPrice()).isEqualTo(orderProductInfo.getProductPrice());

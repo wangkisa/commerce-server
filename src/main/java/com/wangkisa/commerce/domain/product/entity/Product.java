@@ -6,6 +6,7 @@ import com.wangkisa.commerce.exception.CustomException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(name = "product", indexes = {})
+@Check(constraints = "quantity >= 0")
 public class Product extends BaseEntity {
 
     @Id
@@ -30,7 +32,7 @@ public class Product extends BaseEntity {
 
     private Integer quantity;
 
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 10, scale = 0)
     private BigDecimal price;
 
     @Builder
@@ -42,8 +44,12 @@ public class Product extends BaseEntity {
     }
 
     public void checkQuantity(Integer reqQuantity) {
-        if (reqQuantity > this.quantity ) {
-            throw new CustomException(ProductErrorCode.ERROR_LACK_OF_PRODUCT);
+
+        if (this.quantity == 0) {
+            throw new CustomException(ProductErrorCode.ERROR_NONE_OF_PRODUCT_QUANTITY);
+        }
+        else if (reqQuantity > this.quantity ) {
+            throw new CustomException(ProductErrorCode.ERROR_LACK_OF_PRODUCT_QUANTITY);
         }
     }
 }
