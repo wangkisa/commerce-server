@@ -5,6 +5,7 @@ import com.wangkisa.commerce.domain.order.entity.DeliveryInfo;
 import com.wangkisa.commerce.domain.order.entity.Order;
 import com.wangkisa.commerce.domain.order.entity.OrderProduct;
 import com.wangkisa.commerce.domain.order.repository.OrderRepository;
+import com.wangkisa.commerce.domain.order.validator.OrderValidator;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
@@ -32,8 +33,9 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO.ResOrderInfo registerOrder(OrderDTO.ReqRegisterOrder reqRegisterOrder, Long userId) {
 
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER_INFO));
+        OrderValidator.checkTotalQuantity(reqRegisterOrder, productRepository);
+
+        User findUser = getUserFindById(userId);
 
         DeliveryInfo deliveryInfo = DeliveryInfo.builder()
                 .receiverName(reqRegisterOrder.getReceiverName())
@@ -47,11 +49,21 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
 
         List<OrderDTO.OrderProductInfo> orderProductInfoList = reqRegisterOrder.getOrderProductList().stream().map(reqProduct -> {
-                    Product product = productRepository.findById(reqProduct.getProductId()).orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+                    Product product = getProductFindById(reqProduct.getProductId());
                     OrderProduct savedOrderProduct = savedOrder.addOrderProduct(product, reqProduct.getProductQuantity());
                     return OrderDTO.OrderProductInfo.fromOrderProduct(savedOrderProduct);
                 }
         ).collect(Collectors.toList());
         return OrderDTO.ResOrderInfo.fromOrder(savedOrder, orderProductInfoList);
+    }
+
+    @Transactional(readOnly = true)
+    private User getUserFindById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER_INFO));
+    }
+
+    @Transactional(readOnly = true)
+    private Product getProductFindById(Long productId) {
+        return productRepository.findById(productId).orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
     }
 }

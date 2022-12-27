@@ -118,6 +118,35 @@ class OrderServiceImplTest {
     }
 
     @Test
+    @DisplayName("주문 등록시 요청 수량을 여러번 호출해서 합계한 총 수량이 부족 실패 테스트")
+    @Transactional
+    void registerOrderQuantityErrorTest2() {
+        // given
+        // 등록된 상품 수량에 1을 빼서 상품수량보다 작지만
+        // 상품 수량은 4를 보유하지만 두번에 걸쳐 호출해서 요청수량은 3 + 3 이므로 수량 부족 실패
+        OrderDTO.RegisterOrderProduct reqOrderProduct = OrderDTO.RegisterOrderProduct.builder()
+                .productId(defaultProduct.getId())
+                .productQuantity(defaultProduct.getQuantity() - 1)
+                .productName(defaultProduct.getName())
+                .productPrice(defaultProduct.getPrice().longValue())
+                .build();
+        List<OrderDTO.RegisterOrderProduct> orderProductList = new ArrayList<>();
+        // 요청 수량 3 첫번째 설정
+        orderProductList.add(reqOrderProduct);
+        // 요청 수량 3 두번째 설정
+        orderProductList.add(reqOrderProduct);
+        OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(orderProductList);
+
+        // when
+        // 주문 등록
+        CustomException customException = assertThrows(CustomException.class, () -> orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId()));
+
+        // then
+        Assertions.assertThat(customException.getCode()).isEqualTo(ProductErrorCode.ERROR_LACK_OF_PRODUCT_QUANTITY.getCode());
+        Assertions.assertThat(customException.getMessage()).isEqualTo(ProductErrorCode.ERROR_LACK_OF_PRODUCT_QUANTITY.getMsg());
+    }
+
+    @Test
     @DisplayName("주문 등록시 상품 수량이 0인 경우 실패 테스트")
     @Transactional
     void registerOrderZeroQuantityErrorTest() {
@@ -173,6 +202,25 @@ class OrderServiceImplTest {
 
     }
 
+    @Test
+    @DisplayName("구매시 보유 포인트가 상품 금액보다 작은 경우 실패 테스트")
+    @Transactional
+    void $END1() throws Exception {
+        // given
 
+        // when
 
+        // then
+    }
+
+    @Test
+    @DisplayName("정상적인 구매 성공 테스트")
+    @Transactional
+    void $END2() throws Exception {
+        // given
+
+        // when
+
+        // then
+    }
 }
