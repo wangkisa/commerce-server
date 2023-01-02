@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.domain.order.service;
 
+import com.wangkisa.commerce.domain.order.code.OrderErrorCode;
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.entity.Product;
@@ -203,20 +204,28 @@ class OrderServiceImplTest {
     }
 
     @Test
-    @DisplayName("구매시 보유 포인트가 상품 금액보다 작은 경우 실패 테스트")
+    @DisplayName("구매시 유저의 보유 포인트가 상품 금액보다 작은 경우 실패 테스트")
     @Transactional
-    void $END1() throws Exception {
+    void purchaseOrderPointFailTest() {
         // given
+        OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(getRegisterOrderProducts());
+        OrderDTO.ResOrderInfo resOrderInfo = orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId());
+        OrderDTO.ReqPurchaseOrder reqPurchaseOrder = OrderDTO.ReqPurchaseOrder.builder()
+                .orderId(resOrderInfo.getOrderId())
+                .build();
 
         // when
+        CustomException customException = assertThrows(CustomException.class, () -> orderService.purchaseOrder(reqPurchaseOrder, defaultUser.getUserId()));
 
         // then
+        Assertions.assertThat(customException.getCode()).isEqualTo(OrderErrorCode.ERROR_LACK_OF_USER_POINT.getCode());
+        Assertions.assertThat(customException.getMessage()).isEqualTo(OrderErrorCode.ERROR_LACK_OF_USER_POINT.getMsg());
     }
 
     @Test
     @DisplayName("정상적인 구매 성공 테스트")
     @Transactional
-    void $END2() throws Exception {
+    void $END2() {
         // given
 
         // when

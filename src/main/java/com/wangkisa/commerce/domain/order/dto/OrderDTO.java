@@ -104,4 +104,14 @@ public class OrderDTO {
                     .build();
         }
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReqPurchaseOrder {
+
+        @Schema(description = "주문번호")
+        private String orderId;
+    }
 }

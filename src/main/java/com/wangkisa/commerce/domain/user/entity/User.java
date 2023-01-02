@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import java.math.BigDecimal;
+
 import static lombok.AccessLevel.PROTECTED;
 
 @Getter
@@ -34,6 +36,9 @@ public class User extends BaseEntity {
     private String phone;
 
     private String refreshToken;
+
+    @Column(precision = 10, scale = 0)
+    private BigDecimal point;
 
     @Builder
     public User(String email, Password password, String nickname, String phone) {
