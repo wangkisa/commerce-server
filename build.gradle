@@ -1,7 +1,7 @@
 // 최상단에 명시
 buildscript {
 	ext {
-		queryDslVersion = "5.0.0"
+		queryDslVersion = "4.4.0"
 	}
 }
 

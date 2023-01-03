@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.domain.order.service;
 
+import com.wangkisa.commerce.domain.order.code.OrderErrorCode;
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
 import com.wangkisa.commerce.domain.order.entity.DeliveryInfo;
 import com.wangkisa.commerce.domain.order.entity.Order;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +35,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO.ResOrderInfo registerOrder(OrderDTO.ReqRegisterOrder reqRegisterOrder, Long userId) {
 
-        OrderValidator.checkTotalQuantity(reqRegisterOrder, productRepository);
+        OrderValidator orderValidator = new OrderValidator(productRepository, userRepository);
+        orderValidator.checkTotalQuantity(reqRegisterOrder);
 
         User findUser = getUserFindById(userId);
 
@@ -55,6 +58,21 @@ public class OrderServiceImpl implements OrderService {
                 }
         ).collect(Collectors.toList());
         return OrderDTO.ResOrderInfo.fromOrder(savedOrder, orderProductInfoList);
+    }
+
+    @Override
+    public OrderDTO.ResOrderInfo purchaseOrder(OrderDTO.ReqPurchaseOrder reqPurchaseOrder, Long userId) {
+
+        OrderValidator orderValidator = new OrderValidator(productRepository, userRepository);
+        Order order = getOrderFindById(reqPurchaseOrder.getOrderId());
+        orderValidator.checkTotalPrice(order, userId);
+
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    private Order getOrderFindById(String orderId) {
+        return orderRepository.findByUUID(UUID.fromString(orderId)).orElseThrow(() -> new CustomException(OrderErrorCode.ERROR_NOT_FOUND_ORDER));
     }
 
     @Transactional(readOnly = true)

@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.domain.order.service;
 
+import com.wangkisa.commerce.configuration.TestConfig;
 import com.wangkisa.commerce.domain.order.code.OrderErrorCode;
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -24,6 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Import(TestConfig.class)
 class OrderServiceImplTest {
 
     @Autowired
