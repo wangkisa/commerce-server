@@ -31,11 +31,12 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    private final OrderValidator orderValidator;
+
     @Override
     @Transactional
     public OrderDTO.ResOrderInfo registerOrder(OrderDTO.ReqRegisterOrder reqRegisterOrder, Long userId) {
 
-        OrderValidator orderValidator = new OrderValidator(productRepository, userRepository);
         orderValidator.checkTotalQuantity(reqRegisterOrder);
 
         User findUser = getUserFindById(userId);
@@ -63,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDTO.ResOrderInfo purchaseOrder(OrderDTO.ReqPurchaseOrder reqPurchaseOrder, Long userId) {
 
-        OrderValidator orderValidator = new OrderValidator(productRepository, userRepository);
         Order order = getOrderFindById(reqPurchaseOrder.getOrderId());
         orderValidator.checkTotalPrice(order, userId);
 

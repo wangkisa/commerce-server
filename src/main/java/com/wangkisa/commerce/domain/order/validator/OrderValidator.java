@@ -11,11 +11,13 @@ import com.wangkisa.commerce.domain.user.entity.User;
 import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import com.wangkisa.commerce.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
+@Component
 @RequiredArgsConstructor
 public class OrderValidator {
 
