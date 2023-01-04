@@ -36,6 +36,7 @@ public class OrderValidator {
                 });
     }
 
+    @Transactional(readOnly = true)
     private Product getProductById(Long productId) {
         return productRepository.findById(productId).orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
     }
@@ -46,15 +47,13 @@ public class OrderValidator {
         BigDecimal orderTotalPrice = order.getOrderProducts().stream()
                 .map(orderProduct -> orderProduct.getTotalPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-//                .mapTo(orderProduct -> orderProduct.getTotalPrice().longValue())
-//                .sum();
-        System.out.println("orderTotalPrice = " + orderTotalPrice);
-        System.out.println("user.getPoint() = " + user.getPoint());
+
         if (orderTotalPrice.compareTo(user.getPoint()) > 0) {
             throw new CustomException(OrderErrorCode.ERROR_LACK_OF_USER_POINT);
         }
     }
 
+    @Transactional(readOnly = true)
     private User getUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER));
     }

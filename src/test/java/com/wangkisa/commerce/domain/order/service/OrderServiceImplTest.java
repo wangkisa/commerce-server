@@ -8,6 +8,8 @@ import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.domain.product.service.ProductService;
 import com.wangkisa.commerce.domain.user.dto.UserDTO;
+import com.wangkisa.commerce.domain.user.entity.User;
+import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import com.wangkisa.commerce.exception.CustomException;
 import org.assertj.core.api.Assertions;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,6 +45,8 @@ class OrderServiceImplTest {
     OrderService orderService;
     private UserDTO.ResUserInfo defaultUser;
     private Product defaultProduct;
+    @Autowired
+    private UserRepository userRepository;
 
     private UserDTO.ReqSignUp reqSignUpUserDto() {
         return UserDTO.ReqSignUp.builder()
@@ -216,8 +221,12 @@ class OrderServiceImplTest {
         OrderDTO.ReqPurchaseOrder reqPurchaseOrder = OrderDTO.ReqPurchaseOrder.builder()
                 .orderId(resOrderInfo.getOrderId())
                 .build();
+        User user = userRepository.findById(defaultUser.getUserId()).get();
+        // 1000 포인트 충전
+        user.chargePoint(BigDecimal.valueOf(1000L));
 
         // when
+        // 유저가 가진 포인트 1000 이 물건 구매 총 금액 6000 보다 작아서 OrderErrorCode.ERROR_LACK_OF_USER_POINT 발생
         CustomException customException = assertThrows(CustomException.class, () -> orderService.purchaseOrder(reqPurchaseOrder, defaultUser.getUserId()));
 
         // then

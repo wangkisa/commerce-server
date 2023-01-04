@@ -46,7 +46,10 @@ public class User extends BaseEntity {
         this.password = password;
         this.nickname = nickname;
         this.phone = phone;
+        this.point = BigDecimal.ZERO;
     }
 
-
+    public void chargePoint(BigDecimal point){
+        this.point = this.point.add(point);
+    }
 }
