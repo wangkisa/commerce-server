@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -61,13 +62,33 @@ public class OrderServiceImpl implements OrderService {
         return OrderDTO.ResOrderInfo.fromOrder(savedOrder, orderProductInfoList);
     }
 
+    /**
+     * 주문번호를 토대로 구매 진행
+     */
     @Override
+    @Transactional
     public OrderDTO.ResOrderInfo purchaseOrder(OrderDTO.ReqPurchaseOrder reqPurchaseOrder, Long userId) {
 
         Order order = getOrderFindById(reqPurchaseOrder.getOrderId());
-        orderValidator.checkTotalPrice(order, userId);
+        List<OrderDTO.RegisterOrderProduct> orderProductList = new ArrayList<>();
+        order.getOrderProducts().forEach(orderProduct -> {
+            orderProductList.add(OrderDTO.RegisterOrderProduct.builder()
+                            .productId(orderProduct.getProduct().getId())
+                            .productQuantity(orderProduct.getProductQuantity())
+                            .build()
+            );
+        });
 
-        return null;
+        OrderDTO.ReqRegisterOrder reqRegisterOrder = OrderDTO.ReqRegisterOrder.builder()
+                .orderProductList(orderProductList)
+                .build();
+        orderValidator.checkTotalQuantity(reqRegisterOrder);
+        orderValidator.checkTotalPrice(order, userId);
+        User user = getUserFindById(userId);
+
+        user.subtractPoint(order.getOrderTotalPrice());
+
+        return OrderDTO.ResOrderInfo.fromOrder(order, null);
     }
 
     @Transactional(readOnly = true)

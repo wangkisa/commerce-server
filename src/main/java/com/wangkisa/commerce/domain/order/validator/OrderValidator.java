@@ -46,9 +46,7 @@ public class OrderValidator {
     @Transactional(readOnly = true)
     public void checkTotalPrice(Order order, Long userId) {
         User user = getUserById(userId);
-        BigDecimal orderTotalPrice = order.getOrderProducts().stream()
-                .map(orderProduct -> orderProduct.getTotalPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal orderTotalPrice = order.getOrderTotalPrice();
 
         if (orderTotalPrice.compareTo(user.getPoint()) > 0) {
             throw new CustomException(OrderErrorCode.ERROR_LACK_OF_USER_POINT);

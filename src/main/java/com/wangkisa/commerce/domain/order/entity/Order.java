@@ -13,6 +13,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +77,11 @@ public class Order extends BaseEntity {
                 .build();
         this.orderProducts.add(orderProduct);
         return orderProduct;
+    }
+
+    public BigDecimal getOrderTotalPrice() {
+        return this.getOrderProducts().stream()
+                .map(orderProduct -> orderProduct.getTotalPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

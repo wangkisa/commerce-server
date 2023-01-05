@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -237,11 +236,27 @@ class OrderServiceImplTest {
     @Test
     @DisplayName("정상적인 구매 성공 테스트")
     @Transactional
-    void $END2() {
+    void purchaseOrderTest() {
         // given
+        OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(getRegisterOrderProducts());
+        OrderDTO.ResOrderInfo resOrderInfo = orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId());
+        OrderDTO.ReqPurchaseOrder reqPurchaseOrder = OrderDTO.ReqPurchaseOrder.builder()
+                .orderId(resOrderInfo.getOrderId())
+                .build();
+        User user = userRepository.findById(defaultUser.getUserId()).get();
+        // 7000 포인트 충전
+        user.chargePoint(BigDecimal.valueOf(7000L));
 
         // when
+        OrderDTO.ResOrderInfo resultOrderInfo = orderService.purchaseOrder(reqPurchaseOrder, defaultUser.getUserId());
 
         // then
+
+        // 유저가 가진 포인트 7000 이 물건 구매 총 금액 6000 차감되어서 1000 되는지 확인
+        user = userRepository.findById(defaultUser.getUserId()).get();
+        Assertions.assertThat(resultOrderInfo.getReceiverName()).isEqualTo(resOrderInfo.getReceiverName());
+        Assertions.assertThat(user.getPoint()).isEqualTo(BigDecimal.valueOf(1000L));
+
+
     }
 }
