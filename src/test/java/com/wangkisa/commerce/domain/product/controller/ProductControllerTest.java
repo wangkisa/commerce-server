@@ -1,6 +1,7 @@
 package com.wangkisa.commerce.domain.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wangkisa.commerce.configuration.TestConfig;
 import com.wangkisa.commerce.domain.common.code.StatusCode;
 import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
 import com.wangkisa.commerce.domain.product.dto.ProductDTO;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestConfig.class)
+@Transactional
 public class ProductControllerTest {
 
     @Autowired
@@ -59,7 +63,6 @@ public class ProductControllerTest {
         accessToken = "Bearer " + jwtTokenProvider.createToken(userMock.getEmail()).getAccessToken();
     }
 
-    @Transactional
     private Product createProductMock() {
         return productRepository.save(Product.builder()
                 .name("테스트 상품")
@@ -68,7 +71,7 @@ public class ProductControllerTest {
                 .price(BigDecimal.valueOf(2000))
                 .build());
     }
-    @Transactional
+
     private UserDTO.ResUserInfo createUserMock() {
         String email = "test@test.com";
         String nickName = "테스트@@";
@@ -84,7 +87,6 @@ public class ProductControllerTest {
 
     @Test
     @DisplayName("상품 목록 조회 API 테스트")
-    @Transactional
     void getProductListTest() throws Exception {
         // given
 
@@ -105,7 +107,6 @@ public class ProductControllerTest {
 
     @Test
     @DisplayName("상품 상세 조회 API 테스트")
-    @Transactional
     void getProductDetailTest() throws Exception {
         // given
         ProductDTO.ReqProductDetail reqProductDetail = ProductDTO.ReqProductDetail.builder()

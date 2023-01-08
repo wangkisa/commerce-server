@@ -39,11 +39,11 @@ public class OrderDTO {
         private Long productId;
 
         @Schema(description = "상품 수량")
-        private Integer productQuantity;
+        private int productQuantity;
         @Schema(description = "상품 이름")
         private String productName;
         @Schema(description = "상품 가격")
-        private Long productPrice;
+        private long productPrice;
     }
 
     @Getter

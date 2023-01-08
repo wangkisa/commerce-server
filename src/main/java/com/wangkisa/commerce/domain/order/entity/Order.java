@@ -64,7 +64,7 @@ public class Order extends BaseEntity {
         this.deliveryInfo = deliveryInfo;
     }
 
-    public OrderProduct addOrderProduct(Product product, Integer productQuantity) {
+    public OrderProduct addOrderProduct(Product product, int productQuantity) {
         // 제품 수량 체크
         product.checkQuantity(productQuantity);
 

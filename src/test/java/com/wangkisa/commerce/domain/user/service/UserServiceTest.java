@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Transactional
 @Import(TestConfig.class)
 class UserServiceTest {
 
@@ -42,7 +43,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("이메일이 중복인 경우 회원가입 실패 테스트")
-    @Transactional
     public void signUp_EmailDup_FailTest() {
         // given
         UserDTO.ReqSignUp defaultReqSignUpDto = getReqSignUpUserDTO();
@@ -67,7 +67,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("닉네임이 중복인 경우 회원가입 실패 테스트")
-    @Transactional
     public void signUp_NickNameDup_FailTest() {
         // given
         UserDTO.ReqSignUp defaultReqSignUpDto = getReqSignUpUserDTO();
@@ -92,7 +91,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("이메일 혹은 비밀번호 틀린 경우 경우 회원로그인 실패 테스트")
-    @Transactional
     public void signIn_WrongEmailPw_FailTest() {
         // given
         UserDTO.ReqSignUp defaultReqSignUpDto = getReqSignUpUserDTO();
@@ -116,7 +114,6 @@ class UserServiceTest {
 
     @Test
     @DisplayName("회원가입 성공 테스트")
-    @Transactional
     public void signUpTest() {
         // given
         UserDTO.ReqSignUp defaultReqSignUpDto = getReqSignUpUserDTO();

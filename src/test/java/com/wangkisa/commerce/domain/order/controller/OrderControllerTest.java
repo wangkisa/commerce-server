@@ -37,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Import(TestConfig.class)
 @AutoConfigureMockMvc
+@Transactional
 class OrderControllerTest {
 
     @Autowired
@@ -72,7 +73,6 @@ class OrderControllerTest {
         accessToken = "Bearer " + jwtTokenProvider.createToken(defaultUser.getEmail()).getAccessToken();
     }
 
-    @Transactional
     private Product createProductMock() {
         return productRepository.save(Product.builder()
                 .name("테스트 상품")
@@ -81,7 +81,7 @@ class OrderControllerTest {
                 .price(BigDecimal.valueOf(2000))
                 .build());
     }
-    @Transactional
+
     private UserDTO.ResUserInfo createUserMock() {
         String email = "test@test.com";
         String nickName = "테스트@@";
@@ -97,7 +97,6 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("주문서 등록 API 테스트")
-    @Transactional
     void registerOrderTest() throws Exception {
         // given
         OrderDTO.RegisterOrderProduct reqOrderProduct = OrderDTO.RegisterOrderProduct.builder()
@@ -138,7 +137,6 @@ class OrderControllerTest {
 
     @Test
     @DisplayName("상품 구매 진행 API 테스트")
-    @Transactional
     void purchaseOrderTest() throws Exception {
         // given
         OrderDTO.RegisterOrderProduct reqOrderProduct = OrderDTO.RegisterOrderProduct.builder()

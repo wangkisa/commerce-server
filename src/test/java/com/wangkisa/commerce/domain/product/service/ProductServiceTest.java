@@ -1,5 +1,6 @@
 package com.wangkisa.commerce.domain.product.service;
 
+import com.wangkisa.commerce.configuration.TestConfig;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.entity.Product;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -17,6 +19,8 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Import(TestConfig.class)
+@Transactional
 class ProductServiceTest {
 
     @Autowired
@@ -27,7 +31,6 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("상품 목록 조회 테스트")
-    @Transactional
     void productListTest() {
         // given
         Product mockProduct = createProduct();
@@ -38,7 +41,6 @@ class ProductServiceTest {
         Assertions.assertThat(productList.getProductList().get(0).getName()).isEqualTo(mockProduct.getName());
         Assertions.assertThat(productList.getProductList().get(0).getPrice()).isEqualTo(mockProduct.getPrice());
     }
-    @Transactional
     private Product createProduct() {
         return productRepository.save(Product.builder()
                 .name("테스트 상품")
@@ -50,7 +52,6 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("상품 상세 조회 알수없는 상품아이디로 실패 테스트")
-    @Transactional
     void productDetailNotFoundTest() {
         // given
         Product mockProduct = createProduct();
@@ -69,7 +70,6 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("상품 상세 조회 테스트")
-    @Transactional
     void productDetailTest() {
         // given
         Product product = createProduct();

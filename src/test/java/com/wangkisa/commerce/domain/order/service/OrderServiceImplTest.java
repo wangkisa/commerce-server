@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Import(TestConfig.class)
+@Transactional
 class OrderServiceImplTest {
 
     @Autowired
@@ -86,7 +87,6 @@ class OrderServiceImplTest {
         defaultProduct = createProduct();
     }
 
-    @Transactional
     private Product createProduct() {
         return productRepository.save(Product.builder()
                 .name("테스트 상품")
@@ -96,14 +96,12 @@ class OrderServiceImplTest {
                 .build());
     }
 
-    @Transactional
     private UserDTO.ResUserInfo signUpUser() {
         return userService.signUp(reqSignUpUserDto());
     }
 
     @Test
     @DisplayName("주문 등록시 수량 부족 실패 테스트")
-    @Transactional
     void registerOrderQuantityErrorTest() {
         // given
         // 등록된 상품 수량에 1을 더해서 상품수량보다 요청 수량이 많도록 설정
@@ -128,7 +126,6 @@ class OrderServiceImplTest {
 
     @Test
     @DisplayName("주문 등록시 요청 수량을 여러번 호출해서 합계한 총 수량이 부족 실패 테스트")
-    @Transactional
     void registerOrderQuantityErrorTest2() {
         // given
         // 등록된 상품 수량에 1을 빼서 상품수량보다 작지만
@@ -157,7 +154,6 @@ class OrderServiceImplTest {
 
     @Test
     @DisplayName("주문 등록시 상품 수량이 0인 경우 실패 테스트")
-    @Transactional
     void registerOrderZeroQuantityErrorTest() {
         // given
         // 등록된 상품 수량이 0 으로 설정
@@ -189,7 +185,6 @@ class OrderServiceImplTest {
 
     @Test
     @DisplayName("주문 등록 후 주문서 출력 성공 테스트")
-    @Transactional
     void registerOrderTest() {
         // given
         OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(getRegisterOrderProducts());
@@ -213,7 +208,6 @@ class OrderServiceImplTest {
 
     @Test
     @DisplayName("구매시 유저의 보유 포인트가 상품 금액보다 작은 경우 실패 테스트")
-    @Transactional
     void purchaseOrderPointFailTest() {
         // given
         OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(getRegisterOrderProducts());
@@ -236,7 +230,6 @@ class OrderServiceImplTest {
 
     @Test
     @DisplayName("정상적인 구매 성공 테스트")
-    @Transactional
     void purchaseOrderTest() {
         // given
         OrderDTO.ReqRegisterOrder reqRegisterOrder = getReqRegisterOrder(getRegisterOrderProducts());

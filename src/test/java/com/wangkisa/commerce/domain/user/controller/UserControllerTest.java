@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class UserControllerTest {
 
     @Autowired
@@ -37,7 +38,6 @@ class UserControllerTest {
 
     @Test
     @DisplayName("회원가입 성공 테스트")
-    @Transactional
     void signUpTest() throws Exception {
         //given
         String email = "test@test.com";
@@ -66,7 +66,6 @@ class UserControllerTest {
 
     @Test
     @DisplayName("회원로그인 성공 테스트")
-    @Transactional
     void signInTest() throws Exception {
         // given
         String email = "test@test.com";
