@@ -28,15 +28,20 @@ Amazon Linux 2
  
 ## Commerce Service Features
 
+
 ### 회원가입
 
 이메일, 닉네임, 비밀번호, 휴대폰 번호를 입력받는다.
 
 이메일과 닉네임 중복이 되지 않는다.
 
+-----
+
 ### 로그인 / 로그아웃
 
 이메일, 비밀번호를 이용하여 로그인한다.
+
+-----
 
 ### Product 
 
@@ -44,6 +49,9 @@ Product 목록을 조회한다.(Product 등록은 Admin 영역이라 제외)
 
 Product 상세를 조회한다.
 
+-----
+
+✅ 구매에 관련된 사항
 ### Order
 
 Product 선택 후 Order를 등록해서 주문서를 출력한다.
