@@ -34,7 +34,7 @@ public class OrderProduct extends BaseEntity {
     private Integer productQuantity;
 
     private String productName;
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 10, scale = 0)
     private BigDecimal productPrice;
 
     @Column(precision = 10, scale = 2)

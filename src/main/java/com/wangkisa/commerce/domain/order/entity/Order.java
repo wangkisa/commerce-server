@@ -4,6 +4,7 @@ import com.wangkisa.commerce.domain.common.entity.BaseEntity;
 import com.wangkisa.commerce.domain.common.util.BigDecimalUtil;
 import com.wangkisa.commerce.domain.order.code.OrderErrorCode;
 import com.wangkisa.commerce.domain.product.entity.Product;
+import com.wangkisa.commerce.domain.user.code.UserErrorCode;
 import com.wangkisa.commerce.domain.user.entity.User;
 import com.wangkisa.commerce.exception.CustomException;
 import lombok.Builder;
@@ -54,7 +55,7 @@ public class Order extends BaseEntity {
     @Builder
     public Order (User user, DeliveryInfo deliveryInfo) {
         if (user == null) {
-            throw new CustomException(OrderErrorCode.ERROR_NOT_FOUND_USER);
+            throw new CustomException(UserErrorCode.ERROR_NOT_FOUND_USER);
         }
 
         this.user = user;
@@ -79,9 +80,26 @@ public class Order extends BaseEntity {
         return orderProduct;
     }
 
+    // 주문 총 금액 조회
     public BigDecimal getOrderTotalPrice() {
         return this.getOrderProducts().stream()
                 .map(orderProduct -> orderProduct.getTotalPrice())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    // 구매 프로세스
+    public void purchase() {
+        if (!this.orderStatus.equals(OrderStatus.ORDER_INIT)) {
+            throw new CustomException(OrderErrorCode.ERROR_INVALID_ORDER_STATUS);
+        }
+        // 유저 포인트 주문 총 금액만큼 차감
+        this.user.subtractPoint(this.getOrderTotalPrice());
+        // 상품 재고 수량 주문 수량만큼 차감
+        this.orderProducts.forEach(orderProduct ->
+                orderProduct.getProduct().subtractQuantity(
+                        orderProduct.getProductQuantity()
+                ));
+        // 주문 완료 상태로 변경
+        this.orderStatus = OrderStatus.ORDER_COMPLETE;
     }
 }

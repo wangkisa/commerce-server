@@ -7,6 +7,7 @@ public enum ProductErrorCode implements ErrorCodeInterface {
     ERROR_NOT_FOUND_PRODUCT(8001, "찾을 수 없는 상품 정보입니다."),
     ERROR_LACK_OF_PRODUCT_QUANTITY(8002, "해당 상품의 재고가 부족합니다."),
     ERROR_NONE_OF_PRODUCT_QUANTITY(8003, "해당 상품은 매진 되었습니다."),
+    ERROR_ILLEGAL_REQUEST_QUANTITY(8003, "잘못된 주문 수량입니다."),
     ;
 
     private final int code;

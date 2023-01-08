@@ -28,4 +28,11 @@ public class OrderController {
                                                             @Parameter(hidden = true) @AuthUser User user) {
         return ApiResponse.success(orderService.registerOrder(reqRegisterOrder, user.getId()));
     }
+
+    @Operation(summary = "상품 구매 진행")
+    @PostMapping(value = "/purchaseOrder", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<OrderDTO.ResOrderInfo> purchaseOrder(@Validated @RequestBody OrderDTO.ReqPurchaseOrder reqPurchaseOrder,
+                                                            @Parameter(hidden = true) @AuthUser User user) {
+        return ApiResponse.success(orderService.purchaseOrder(reqPurchaseOrder, user.getId()));
+    }
 }

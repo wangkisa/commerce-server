@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -26,16 +27,27 @@ public class OrderValidator {
 
     // 전체 요청의 상품별 합계 요청 수량이 상품의 수량 이하인지 체크
     @Transactional(readOnly = true)
-    public void checkTotalQuantity(OrderDTO.ReqRegisterOrder reqRegisterOrder) {
+    public void checkTotalQuantity(List<OrderDTO.RegisterOrderProduct> orderProductList, Order order) {
 
-        reqRegisterOrder.getOrderProductList().stream()
-                .collect(Collectors.toMap(orderProduct -> orderProduct.getProductId(),
-                        orderProduct -> orderProduct.getProductQuantity(),
-                        Integer::sum))
-                .forEach((productId, quantity) -> {
-                    Product product = getProductById( productId);
-                    product.checkQuantity(quantity);
-                });
+        if (order != null) {
+            orderProductList.clear();
+            order.getOrderProducts().forEach(orderProduct -> {
+                orderProductList.add(OrderDTO.RegisterOrderProduct.builder()
+                        .productId(orderProduct.getProduct().getId())
+                        .productQuantity(orderProduct.getProductQuantity())
+                        .build()
+                );
+            });
+        }
+
+        orderProductList.stream()
+            .collect(Collectors.toMap(orderProduct -> orderProduct.getProductId(),
+                    orderProduct -> orderProduct.getProductQuantity(),
+                    Integer::sum))
+            .forEach((productId, quantity) -> {
+                Product product = getProductById( productId);
+                product.checkQuantity(quantity);
+            });
     }
 
     @Transactional(readOnly = true)

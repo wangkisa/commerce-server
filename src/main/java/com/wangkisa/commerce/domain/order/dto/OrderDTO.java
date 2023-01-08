@@ -2,6 +2,7 @@ package com.wangkisa.commerce.domain.order.dto;
 
 import com.wangkisa.commerce.domain.order.entity.Order;
 import com.wangkisa.commerce.domain.order.entity.OrderProduct;
+import com.wangkisa.commerce.domain.order.entity.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -49,10 +50,14 @@ public class OrderDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     public static class ResOrderInfo {
 
         @Schema(description = "주문 아이디")
         private String orderId;
+
+        @Schema(description = "주문 상태")
+        private OrderStatus orderStatus;
 
         @Schema(description = "수령인")
         private String receiverName;
@@ -64,8 +69,11 @@ public class OrderDTO {
         private List<OrderProductInfo> orderProductList = new ArrayList<>();
 
         public static ResOrderInfo fromOrder(Order order, List<OrderProductInfo> orderProductList) {
+            List<OrderProduct> orderProducts = order.getOrderProducts();
+
             return ResOrderInfo.builder()
                     .orderId(order.getId().toString())
+                    .orderStatus(order.getOrderStatus())
                     .receiverName(order.getDeliveryInfo().getReceiverName())
                     .receiverAddress(order.getDeliveryInfo().getReceiverAddress())
                     .etcMessage(order.getDeliveryInfo().getEtcMessage())

@@ -3,6 +3,7 @@ package com.wangkisa.commerce.domain.order.service;
 import com.wangkisa.commerce.configuration.TestConfig;
 import com.wangkisa.commerce.domain.order.code.OrderErrorCode;
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
+import com.wangkisa.commerce.domain.order.entity.OrderStatus;
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
@@ -251,12 +252,15 @@ class OrderServiceImplTest {
         OrderDTO.ResOrderInfo resultOrderInfo = orderService.purchaseOrder(reqPurchaseOrder, defaultUser.getUserId());
 
         // then
-
-        // 유저가 가진 포인트 7000 이 물건 구매 총 금액 6000 차감되어서 1000 되는지 확인
         user = userRepository.findById(defaultUser.getUserId()).get();
+        Product product = productRepository.findById(defaultProduct.getId()).get();
         Assertions.assertThat(resultOrderInfo.getReceiverName()).isEqualTo(resOrderInfo.getReceiverName());
+        // 유저가 가진 포인트 7000 이 물건 구매 총 금액 6000 차감되어서 1000 되는지 확인
         Assertions.assertThat(user.getPoint()).isEqualTo(BigDecimal.valueOf(1000L));
-
+        // 상품 재고 수량 4 에서 주문 수량 2 만큼 차감해서 2 되는지 확인
+        Assertions.assertThat(product.getQuantity()).isEqualTo(2);
+        // 주문상태가 '주문 완료' 확인
+        Assertions.assertThat(resultOrderInfo.getOrderStatus()).isEqualTo(OrderStatus.ORDER_COMPLETE);
 
     }
 }

@@ -1,12 +1,16 @@
 package com.wangkisa.commerce.domain.order.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wangkisa.commerce.configuration.TestConfig;
 import com.wangkisa.commerce.domain.common.code.StatusCode;
 import com.wangkisa.commerce.domain.jwt.JwtTokenProvider;
 import com.wangkisa.commerce.domain.order.dto.OrderDTO;
+import com.wangkisa.commerce.domain.order.service.OrderService;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.domain.user.dto.UserDTO;
+import com.wangkisa.commerce.domain.user.entity.User;
+import com.wangkisa.commerce.domain.user.repository.UserRepository;
 import com.wangkisa.commerce.domain.user.service.UserService;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@Import(TestConfig.class)
 @AutoConfigureMockMvc
 class OrderControllerTest {
 
@@ -43,6 +49,12 @@ class OrderControllerTest {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private UserDTO.ResUserInfo defaultUser;
     private Product defaultProduct;
@@ -121,7 +133,49 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.data.orderProductList[0].productQuantity").value(2))
                 .andExpect(jsonPath("$.data.orderProductList[0].productName").value(defaultProduct.getName()))
                 .andExpect(jsonPath("$.data.orderProductList[0].productPrice").value(defaultProduct.getPrice()))
-                .andExpect(jsonPath("$.data.orderProductList[0].totalPrice").value(defaultProduct.getPrice().longValue()*2))
-        ;
+                .andExpect(jsonPath("$.data.orderProductList[0].totalPrice").value(defaultProduct.getPrice().longValue()*2));
+    }
+
+    @Test
+    @DisplayName("상품 구매 진행 API 테스트")
+    @Transactional
+    void purchaseOrderTest() throws Exception {
+        // given
+        OrderDTO.RegisterOrderProduct reqOrderProduct = OrderDTO.RegisterOrderProduct.builder()
+                .productId(defaultProduct.getId())
+                .productQuantity(2)
+                .productName(defaultProduct.getName())
+                .productPrice(defaultProduct.getPrice().longValue())
+                .build();
+        List<OrderDTO.RegisterOrderProduct> orderProductList = new ArrayList<>();
+        orderProductList.add(reqOrderProduct);
+        OrderDTO.ReqRegisterOrder reqRegisterOrder = OrderDTO.ReqRegisterOrder.builder()
+                .receiverName("test 유저")
+                .receiverAddress("구리시")
+                .etcMessage("배송 빨리")
+                .orderProductList(orderProductList)
+                .build();
+
+        User user = userRepository.findById(defaultUser.getUserId()).get();
+        // 7000 포인트 충전
+        user.chargePoint(BigDecimal.valueOf(7000L));
+
+        OrderDTO.ResOrderInfo resOrderInfo = orderService.registerOrder(reqRegisterOrder, defaultUser.getUserId());
+        OrderDTO.ReqPurchaseOrder reqPurchaseOrder = OrderDTO.ReqPurchaseOrder.builder()
+                .orderId(resOrderInfo.getOrderId())
+                .build();
+
+        // when
+        // then
+        mockMvc.perform(post(BASE_URL + "/purchaseOrder")
+                        .header(HttpHeaders.AUTHORIZATION, accessToken)
+                        .content(mapper.writeValueAsString(reqPurchaseOrder))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(StatusCode.OK_CODE))
+                .andExpect(jsonPath("$.message").value(IsNull.nullValue()))
+                .andExpect(jsonPath("$.data.orderId").value(resOrderInfo.getOrderId()));
     }
 }

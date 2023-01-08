@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO.ResOrderInfo registerOrder(OrderDTO.ReqRegisterOrder reqRegisterOrder, Long userId) {
 
-        orderValidator.checkTotalQuantity(reqRegisterOrder);
+        orderValidator.checkTotalQuantity(reqRegisterOrder.getOrderProductList(), null);
 
         User findUser = getUserFindById(userId);
 
@@ -71,22 +71,11 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = getOrderFindById(reqPurchaseOrder.getOrderId());
         List<OrderDTO.RegisterOrderProduct> orderProductList = new ArrayList<>();
-        order.getOrderProducts().forEach(orderProduct -> {
-            orderProductList.add(OrderDTO.RegisterOrderProduct.builder()
-                            .productId(orderProduct.getProduct().getId())
-                            .productQuantity(orderProduct.getProductQuantity())
-                            .build()
-            );
-        });
 
-        OrderDTO.ReqRegisterOrder reqRegisterOrder = OrderDTO.ReqRegisterOrder.builder()
-                .orderProductList(orderProductList)
-                .build();
-        orderValidator.checkTotalQuantity(reqRegisterOrder);
+        orderValidator.checkTotalQuantity(orderProductList, order);
         orderValidator.checkTotalPrice(order, userId);
-        User user = getUserFindById(userId);
 
-        user.subtractPoint(order.getOrderTotalPrice());
+        order.purchase();
 
         return OrderDTO.ResOrderInfo.fromOrder(order, null);
     }

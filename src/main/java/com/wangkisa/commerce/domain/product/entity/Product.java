@@ -43,6 +43,7 @@ public class Product extends BaseEntity {
         this.price = price;
     }
 
+    // 상품 수량 체크
     public void checkQuantity(Integer reqQuantity) {
 
         if (this.quantity == 0) {
@@ -51,5 +52,13 @@ public class Product extends BaseEntity {
         else if (reqQuantity > this.quantity ) {
             throw new CustomException(ProductErrorCode.ERROR_LACK_OF_PRODUCT_QUANTITY);
         }
+    }
+
+    // 상품 수량 차감
+    public void subtractQuantity(Integer quantity) {
+        if (this.quantity - quantity < 0) {
+            throw new CustomException(ProductErrorCode.ERROR_ILLEGAL_REQUEST_QUANTITY);
+        }
+        this.quantity -= quantity;
     }
 }
