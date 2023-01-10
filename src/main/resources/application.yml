@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/test_commerce_db
+    username:
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: true
+        show_sql: true
+        use_sql_comments: false
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
