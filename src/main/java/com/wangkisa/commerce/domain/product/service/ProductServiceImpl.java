@@ -1,16 +1,16 @@
 package com.wangkisa.commerce.domain.product.service;
 
 import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
+import com.wangkisa.commerce.domain.product.dto.PageRequestDTO;
 import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.entity.Product;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +23,10 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional(readOnly = true)
-    public ProductDTO.ResProductList getProductList() {
-        List<ProductDTO.ResDefaultList> productList = productRepository.findAll().stream().map(product ->
-                ProductDTO.ResDefaultList.fromProduct(product)).collect(Collectors.toList());
-        return ProductDTO.ResProductList.builder()
-                .productList(productList)
-                .build();
+    public ProductDTO.ResProductList getProductList(PageRequestDTO pageRequestDTO) {
+        Page<Product> productPage = productRepository.findAllByPageRequestDTO(PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize()));
+
+        return ProductDTO.ResProductList.fromPageProductList(productPage);
     }
 
     /**

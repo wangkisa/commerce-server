@@ -6,9 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductDTO {
 
@@ -20,6 +22,23 @@ public class ProductDTO {
 
         @Schema(description = "상품 목록")
         List<ResDefaultList> productList;
+
+        @Schema(description = "전체 개수")
+        long totalCount;
+        @Schema(description = "다음 페이지 유무")
+        boolean hasNext;
+
+        public static ResProductList fromPageProductList(Page<Product> productPage) {
+            System.out.println("productPage = " + productPage);
+            List<ResDefaultList> productList = productPage.getContent().stream().map(product -> ResDefaultList.fromProduct(product))
+                    .collect(Collectors.toList());
+            return ResProductList.builder()
+                    .productList(productList)
+                    .totalCount(productPage.getTotalElements())
+                    .hasNext(productPage.hasNext())
+                    .build();
+//                    (productPage.getContent(), productPage.getTotalElements(), productPage.hasNext());
+        }
     }
 
     @Getter
@@ -35,11 +54,15 @@ public class ProductDTO {
         @Schema(description = "상품 가격")
         private BigDecimal price;
 
+        @Schema(description = "상품 수량")
+        private int quantity;
+
         public static ResDefaultList fromProduct(Product product) {
             return ResDefaultList.builder()
                     .productId(product.getId())
                     .name(product.getName())
                     .price(product.getPrice())
+                    .quantity(product.getQuantity())
                     .build();
         }
     }

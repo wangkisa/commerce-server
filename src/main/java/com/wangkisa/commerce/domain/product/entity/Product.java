@@ -30,7 +30,7 @@ public class Product extends BaseEntity {
 
     private String color;
 
-    private Integer quantity;
+    private int quantity;
 
     @Column(precision = 10, scale = 0)
     private BigDecimal price;

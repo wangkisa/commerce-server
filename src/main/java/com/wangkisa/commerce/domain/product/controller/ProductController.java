@@ -1,6 +1,7 @@
 package com.wangkisa.commerce.domain.product.controller;
 
 import com.wangkisa.commerce.domain.common.response.ApiResponse;
+import com.wangkisa.commerce.domain.product.dto.PageRequestDTO;
 import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,8 +22,8 @@ public class ProductController {
 
     @Operation(summary = "상품 목록 조회")
     @PostMapping(value = "/getProductList", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<ProductDTO.ResProductList> getProductList() {
-        return ApiResponse.success(productService.getProductList());
+    public ApiResponse<ProductDTO.ResProductList> getProductList(@Validated @RequestBody PageRequestDTO pageRequestDTO) {
+        return ApiResponse.success(productService.getProductList(pageRequestDTO));
     }
 
     @Operation(summary = "상품 상세 조회")
