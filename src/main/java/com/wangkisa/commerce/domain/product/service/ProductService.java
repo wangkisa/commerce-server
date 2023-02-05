@@ -7,4 +7,6 @@ public interface ProductService {
     ProductDTO.ResProductList getProductList(PageRequestDTO pageRequestDTO);
 
     ProductDTO.ResProductDetail getProductDetail(ProductDTO.ReqProductDetail reqProductDetail);
+
+    void synchronizedSubtractQuantity(Long id, Integer quantity);
 }

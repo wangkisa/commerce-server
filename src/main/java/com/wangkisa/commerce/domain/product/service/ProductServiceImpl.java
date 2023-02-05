@@ -41,4 +41,13 @@ public class ProductServiceImpl implements ProductService {
 
         return ProductDTO.ResProductDetail.fromProduct(product);
     }
+
+    @Override
+    public synchronized void synchronizedSubtractQuantity(final Long id, final Integer quantity) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+        product.subtractQuantity(quantity);
+        productRepository.saveAndFlush(product);
+    }
 }

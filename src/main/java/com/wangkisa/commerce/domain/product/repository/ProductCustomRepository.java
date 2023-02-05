@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ProductCustomRepository {
 
     Page<Product> findAllByPageRequestDTO(Pageable pageable);
+
+//    Product getProduct(long productId);
 }
