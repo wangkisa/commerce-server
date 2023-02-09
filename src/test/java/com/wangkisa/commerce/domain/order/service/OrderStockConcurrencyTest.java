@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
 
-import static java.lang.Thread.sleep;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -25,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestConfig.class)
 public class OrderStockConcurrencyTest {
 
-    private final int threadCount = 10;
+    private final int threadCount = 100;
     private long productId;
     private final Integer quantity = 1;
-    private final Integer initQuantity = 10;
+    private final Integer initQuantity = 100;
     private ExecutorService executorService;
     private CountDownLatch countDownLatch;
     @Autowired
@@ -54,7 +53,6 @@ public class OrderStockConcurrencyTest {
     void synchronizedSubtractQuantityTest() throws InterruptedException {
         // given
         System.out.println("test productId id = " + productId);
-        sleep(1000);
 
         // when
         IntStream.range(0, threadCount).forEach(e -> executorService.submit(() -> {
@@ -75,6 +73,26 @@ public class OrderStockConcurrencyTest {
         // then
         final Integer afterQuantity = productRepository.findById(productId).get().getQuantity();
         System.out.println("SYNCHRONIZED 동시성 처리 이후 수량: " + afterQuantity);
+        assertThat(afterQuantity).isZero();
+    }
+
+    @DisplayName("pessimistic lock을 사용한 재고 감소 테스트")
+    @Test
+    void pessimisticLockSubtractQuantityTest() throws InterruptedException {
+        // given
+        // when
+        IntStream.range(0, threadCount).forEach(e -> executorService.submit(() -> {
+                try {
+                    productService.pessimisticLockSubtractQuantity(productId, quantity);
+                } finally {
+                    countDownLatch.countDown();
+                }
+            }
+        ));
+        countDownLatch.await();
+        // then
+        final Integer afterQuantity = productRepository.findById(productId).get().getQuantity();
+        System.out.println("PESSIMISTIC LOCK 동시성 처리 이후 수량:" + afterQuantity);
         assertThat(afterQuantity).isZero();
     }
 

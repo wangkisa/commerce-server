@@ -28,4 +28,11 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository{
                 .fetchResults();
         return new PageImpl<>(productQueryResults.getResults(), pageable, productQueryResults.getTotal());
     }
+
+//    @Override
+//    public Product getByProductId(long productId) {
+//        return jpaQueryFactory.selectFrom(product)
+//                .where(product.id.eq(productId))
+//                .fetchOne();
+//    }
 }
