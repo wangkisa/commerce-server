@@ -35,6 +35,9 @@ public class Product extends BaseEntity {
     @Column(precision = 10, scale = 0)
     private BigDecimal price;
 
+    @Version
+    private Long version;
+
     @Builder
     public Product(String name, String color, Integer quantity, BigDecimal price) {
         this.name = name;

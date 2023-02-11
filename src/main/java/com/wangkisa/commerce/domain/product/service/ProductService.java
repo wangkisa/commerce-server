@@ -11,4 +11,6 @@ public interface ProductService {
     void synchronizedSubtractQuantity(Long productId, Integer quantity);
 
     void pessimisticLockSubtractQuantity(Long productId, Integer quantity);
+
+    void optimisticLockSubtractQuantity(Long productId, Integer quantity);
 }

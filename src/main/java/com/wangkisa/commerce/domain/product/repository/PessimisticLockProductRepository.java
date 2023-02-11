@@ -9,7 +9,7 @@ import javax.persistence.LockModeType;
 import java.util.Optional;
 
 @Repository
-public interface PessimisticProductRepository extends JpaRepository<Product, Long> {
+public interface PessimisticLockProductRepository extends JpaRepository<Product, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Product> findById(Long id);

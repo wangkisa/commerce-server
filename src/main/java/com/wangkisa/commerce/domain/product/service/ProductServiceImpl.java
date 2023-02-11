@@ -4,7 +4,8 @@ import com.wangkisa.commerce.domain.product.code.ProductErrorCode;
 import com.wangkisa.commerce.domain.product.dto.PageRequestDTO;
 import com.wangkisa.commerce.domain.product.dto.ProductDTO;
 import com.wangkisa.commerce.domain.product.entity.Product;
-import com.wangkisa.commerce.domain.product.repository.PessimisticProductRepository;
+import com.wangkisa.commerce.domain.product.repository.OptimisticLockProductRepository;
+import com.wangkisa.commerce.domain.product.repository.PessimisticLockProductRepository;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
 import com.wangkisa.commerce.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final PessimisticProductRepository pessimisticProductRepository;
+    private final PessimisticLockProductRepository pessimisticLockProductRepository;
+    private final OptimisticLockProductRepository optimisticLockProductRepository;
 
     /**
      * 상품 목록 조회
@@ -56,7 +58,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void pessimisticLockSubtractQuantity(Long id, Integer quantity) {
-        Product product = pessimisticProductRepository.findById(id)
+        Product product = pessimisticLockProductRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+        product.subtractQuantity(quantity);
+    }
+
+    @Override
+    @Transactional
+    public void optimisticLockSubtractQuantity(Long id, Integer quantity) {
+        Product product = optimisticLockProductRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
         product.subtractQuantity(quantity);
     }
