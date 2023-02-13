@@ -46,6 +46,21 @@ public class ProductServiceImpl implements ProductService {
         return ProductDTO.ResProductDetail.fromProduct(product);
     }
 
+    /**
+     * 동시성 이슈 스터디용 - 일반 재고 감소
+     */
+    @Override
+    @Transactional
+    public void subtractQuantity(final Long id, final Integer quantity) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+        product.subtractQuantity(quantity);
+    }
+
+    /**
+     * 동시성 이슈 스터디용 - synchronized 이용한 재고 감소
+     */
     @Override
     public synchronized void synchronizedSubtractQuantity(final Long id, final Integer quantity) {
 
@@ -55,6 +70,9 @@ public class ProductServiceImpl implements ProductService {
         productRepository.saveAndFlush(product);
     }
 
+    /**
+     * 동시성 이슈 스터디용 - Pessimistic Lock 이용한 재고 감소
+     */
     @Override
     @Transactional
     public void pessimisticLockSubtractQuantity(final Long id, final Integer quantity) {
@@ -63,6 +81,9 @@ public class ProductServiceImpl implements ProductService {
         product.subtractQuantity(quantity);
     }
 
+    /**
+     * 동시성 이슈 스터디용 - Optimistic Lock 이용한 재고 감소
+     */
     @Override
     @Transactional
     public void optimisticLockSubtractQuantity(final Long id, final Integer quantity) {
@@ -71,9 +92,12 @@ public class ProductServiceImpl implements ProductService {
         product.subtractQuantity(quantity);
     }
 
+    /**
+     * 동시성 이슈 스터디용 - Redisson Lock 이용한 재고 감소
+     */
     @Override
     @Transactional
-    public void synchronizedSubtractQuantity2(final Long id, final Integer quantity) {
+    public synchronized void synchronizedSubtractQuantity2(final Long id, final Integer quantity) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
         product.subtractQuantity(quantity);

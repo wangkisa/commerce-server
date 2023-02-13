@@ -9,6 +9,8 @@ public interface ProductService {
 
     ProductDTO.ResProductDetail getProductDetail(ProductDTO.ReqProductDetail reqProductDetail);
 
+    void subtractQuantity(Long id, Integer quantity);
+
     void synchronizedSubtractQuantity(Long productId, Integer quantity);
 
     void pessimisticLockSubtractQuantity(Long productId, Integer quantity);

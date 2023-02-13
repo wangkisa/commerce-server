@@ -26,10 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestConfig.class)
 public class OrderStockConcurrencyTest {
 
-    private final int threadCount = 100;
+    private final int threadCount = 300;
     private long productId;
     private final Integer quantity = 1;
-    private final Integer initQuantity = 100;
+    private final Integer initQuantity = 300;
     private ExecutorService executorService;
     private CountDownLatch countDownLatch;
     @Autowired
@@ -57,11 +57,35 @@ public class OrderStockConcurrencyTest {
     }
 
     @Test
+    @DisplayName("멀티쓰레드를 사용한 재고 감소 실패 테스트")
+    void multiThreadSubtractQuantityTest() throws InterruptedException {
+        IntStream.range(0, threadCount).forEach(e -> executorService.submit(() -> {
+                    try {
+                        productService.subtractQuantity(productId, quantity);
+                    }
+                    catch (Exception error) {
+                        System.out.println("error = " + error);
+                    }
+                    finally {
+                        countDownLatch.countDown();
+                    }
+                }
+        ));
+
+        countDownLatch.await();
+
+        // then
+        final Integer afterQuantity = productRepository.findById(productId).get().getQuantity();
+        System.out.println("멀티쓰레드 처리 이후 수량: " + afterQuantity);
+        // 멀티쓰레드로 재고 감소를 하다보면 270, 280 등 수량이 계속해서 맞지 않고 재고 수량이 0이 되지 않는다.
+        assertThat(afterQuantity).isNotZero();
+        assertThat(afterQuantity).isNotEqualTo(initQuantity);
+    }
+
+    @Test
     @DisplayName("SYNCHRONIZED를 사용한 재고 감소 테스트")
     void synchronizedSubtractQuantityTest() throws InterruptedException {
         // given
-        System.out.println("test productId id = " + productId);
-
         // when
         IntStream.range(0, threadCount).forEach(e -> executorService.submit(() -> {
                     try {
