@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void pessimisticLockSubtractQuantity(Long id, Integer quantity) {
+    public void pessimisticLockSubtractQuantity(final Long id, final Integer quantity) {
         Product product = pessimisticLockProductRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
         product.subtractQuantity(quantity);
@@ -65,8 +65,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void optimisticLockSubtractQuantity(Long id, Integer quantity) {
+    public void optimisticLockSubtractQuantity(final Long id, final Integer quantity) {
         Product product = optimisticLockProductRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
+        product.subtractQuantity(quantity);
+    }
+
+    @Override
+    @Transactional
+    public void synchronizedSubtractQuantity2(final Long id, final Integer quantity) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ProductErrorCode.ERROR_NOT_FOUND_PRODUCT));
         product.subtractQuantity(quantity);
     }

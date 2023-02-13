@@ -2,8 +2,9 @@ package com.wangkisa.commerce.domain.order.service;
 
 import com.wangkisa.commerce.configuration.TestConfig;
 import com.wangkisa.commerce.domain.product.entity.Product;
+import com.wangkisa.commerce.domain.product.facade.RedissonLockProductFacade;
 import com.wangkisa.commerce.domain.product.repository.ProductRepository;
-import com.wangkisa.commerce.domain.product.service.OptimisticLockProductFacade;
+import com.wangkisa.commerce.domain.product.facade.OptimisticLockProductFacade;
 import com.wangkisa.commerce.domain.product.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,9 @@ public class OrderStockConcurrencyTest {
 
     @Autowired
     private OptimisticLockProductFacade optimisticLockProductFacade;
+
+    @Autowired
+    private RedissonLockProductFacade redissonLockProductFacade;
 
     @BeforeEach
     void setUp() {
@@ -119,6 +123,28 @@ public class OrderStockConcurrencyTest {
         // then
         final Integer afterQuantity = productRepository.findById(productId).get().getQuantity();
         System.out.println("OPTIMISTIC LOCK 동시성 처리 이후 수량:" + afterQuantity);
+        assertThat(afterQuantity).isZero();
+    }
+
+    @DisplayName("redis reddison lock 을 사용한 재고 감소 테스트")
+    @Test
+    void reddisonLockSubtractQuantityTest() throws InterruptedException {
+        // given
+        // when
+        IntStream.range(0, threadCount).forEach(e -> executorService.submit(() -> {
+                    try {
+                        redissonLockProductFacade.synchronizedSubtractQuantity(productId, quantity);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                }
+        ));
+        countDownLatch.await();
+        // then
+        final Integer afterQuantity = productRepository.findById(productId).get().getQuantity();
+        System.out.println("REDDISON LOCK 동시성 처리 이후 수량:" + afterQuantity);
         assertThat(afterQuantity).isZero();
     }
 

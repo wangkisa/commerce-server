@@ -1,5 +1,6 @@
-package com.wangkisa.commerce.domain.product.service;
+package com.wangkisa.commerce.domain.product.facade;
 
+import com.wangkisa.commerce.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
