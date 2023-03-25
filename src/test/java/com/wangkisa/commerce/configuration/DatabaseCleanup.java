@@ -1,6 +1,8 @@
 package com.wangkisa.commerce.configuration;
 
 import com.google.common.base.CaseFormat;
+import groovy.util.logging.Log;
+import groovy.util.logging.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ActiveProfiles;
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@ActiveProfiles("test")
+//@ActiveProfiles("test")
+@Slf4j
 public class DatabaseCleanup implements InitializingBean {
     @PersistenceContext
     private EntityManager entityManager;

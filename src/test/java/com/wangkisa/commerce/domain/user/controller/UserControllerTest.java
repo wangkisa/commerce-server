@@ -73,29 +73,31 @@ class UserControllerTest extends AcceptanceTest {
         assertThat(data.get("phone")).isEqualTo(signUpRequest.getPhone());
     }
 
-//    @Test
-//    @DisplayName("회원로그인 성공 테스트")
-//    void signInTest() throws Exception {
-//        // given
-//        String email = "test@test.com";
-//        String nickName = "테스트@@";
-//        String phone = "010-1234-5678";
-//        UserDTO.ReqSignIn signInRequest = UserDTO.ReqSignIn.builder()
-//                .email(email)
-//                .password("testtest")
-//                .build();
-//
-//        UserDTO.ReqSignUp signUpRequest = UserDTO.ReqSignUp.builder()
-//                .email(signInRequest.getEmail())
-//                .nickName(nickName)
-//                .password(signInRequest.getPassword())
-//                .phone(phone)
-//                .build();
-//
-//        userService.signUp(signUpRequest);
-//
-//        // when
-//        // then
+    @Test
+    @DisplayName("회원로그인 성공 테스트")
+    void signInTest() throws Exception {
+        // given
+        String email = "test@test.com";
+        String nickName = "테스트@@";
+        String phone = "010-1234-5678";
+        UserDTO.ReqSignIn signInRequest = UserDTO.ReqSignIn.builder()
+                .email(email)
+                .password("testtest")
+                .build();
+
+        UserDTO.ReqSignUp signUpRequest = UserDTO.ReqSignUp.builder()
+                .email(signInRequest.getEmail())
+                .nickName(nickName)
+                .password(signInRequest.getPassword())
+                .phone(phone)
+                .build();
+
+        UserDTO.ResUserInfo resUserInfo = userService.signUp(signUpRequest);
+
+        System.out.println("resUserInfo = " + resUserInfo);
+
+        // when
+        // then
 //        mockMvc.perform(post(BASE_URL + "/signIn")
 //                        .content(mapper.writeValueAsString(signInRequest))
 //                        .contentType(MediaType.APPLICATION_JSON)
@@ -110,5 +112,5 @@ class UserControllerTest extends AcceptanceTest {
 //                .andExpect(jsonPath("$.data.accessToken").value(IsNull.notNullValue()))
 //                .andExpect(jsonPath("$.data.refreshToken").value(IsNull.notNullValue()))
 //        ;
-//    }
+    }
 }
