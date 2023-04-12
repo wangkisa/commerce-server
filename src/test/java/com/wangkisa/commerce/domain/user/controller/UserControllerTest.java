@@ -96,21 +96,24 @@ class UserControllerTest extends AcceptanceTest {
 
         System.out.println("resUserInfo = " + resUserInfo);
 
-        // when
-        // then
-//        mockMvc.perform(post(BASE_URL + "/signIn")
-//                        .content(mapper.writeValueAsString(signInRequest))
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                )
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.code").value(StatusCode.OK_CODE))
-//                .andExpect(jsonPath("$.message").value(IsNull.nullValue()))
-//                .andExpect(jsonPath("$.data.email").value(email))
-//                .andExpect(jsonPath("$.data.nickname").value(nickName))
-//                .andExpect(jsonPath("$.data.phone").value(phone))
-//                .andExpect(jsonPath("$.data.accessToken").value(IsNull.notNullValue()))
-//                .andExpect(jsonPath("$.data.refreshToken").value(IsNull.notNullValue()))
-//        ;
+        //when
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .body(signInRequest)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post(BASE_URL + "/signIn")
+                .then().log().all()
+                .extract();
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getInt("code")).isEqualTo(StatusCode.OK_CODE);
+        Map<String, Object> data = response.jsonPath().getMap("data");
+
+        assertThat(data.get("email")).isEqualTo(signInRequest.getEmail());
+        assertThat(data.get("nickname")).isEqualTo(signUpRequest.getNickName());
+        assertThat(data.get("phone")).isEqualTo(signUpRequest.getPhone());
+        assertThat(data.get("accessToken")).isNotNull();
+        assertThat(data.get("refreshToken")).isNotNull();
     }
 }
